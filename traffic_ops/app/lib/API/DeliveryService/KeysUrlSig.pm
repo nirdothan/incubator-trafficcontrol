@@ -71,6 +71,63 @@ sub view_by_xmlid {
 	} 
 }
 
+
+sub update_url_sig_keys_by_xmlid {
+	my $self                = shift;
+	my $xml_id              = $self->param('xmlId');
+	my $url_sig_key_values_json = encode_json($self->req->json);
+
+	my $is_admin = &is_admin($self);
+	#check ds and generate config file name
+	my $rs = $self->db->resultset("Deliveryservice")->find( { xml_id => $xml_id } );
+	my $ds_id;
+	if ( defined($rs) ) {
+		$ds_id = $rs->id;
+	}
+	else {
+		return $self->alert("Delivery Service '$xml_id' does not exist.");
+	}
+	my $tenant_utils = Utils::Tenant->new($self);
+	my $tenants_data = $tenant_utils->create_tenants_data_from_db();
+	if (!$tenant_utils->is_ds_resource_accessible($tenants_data, $rs->tenant_id)) {
+		return $self->forbidden("Forbidden. Delivery-service tenant is not available to the user.");
+	}
+	my $config_file = $self->url_sig_config_file_name($xml_id);
+
+	my $helper = new Utils::Helper( { mojo => $self } );
+
+	if ( defined($url_sig_key_values_json) ) { # verify we got keys
+		# Admins can always do this, otherwise verify the user
+		if ( $helper->is_valid_delivery_service($ds_id) ) {
+			if ( $is_admin || $helper->is_delivery_service_assigned($ds_id) || $tenant_utils->use_tenancy()) {
+				$self->app->log->debug( "url_sig_key_values_json #-> " . $url_sig_key_values_json );
+				my $response_container = $self->riak_put( URL_SIG_KEYS_BUCKET, $config_file, $url_sig_key_values_json );
+				my $response           = $response_container->{"response"};
+				my $rc                 = $response->{_rc};
+				if ( $rc eq '204' ) {
+					&log( $self, "Stored url_sig_keys to " . $xml_id, "APICHANGE" );
+					return $self->success_message("Successfully stored keys");
+				}
+				else {
+					my $error_msg = $response->{_content};
+					$self->app->log->warn("received error code '$rc' from riak: '$error_msg'");
+					return $self->alert( $response->{_content} );
+				}
+			}
+			else {
+				return $self->forbidden("Forbidden. Delivery service not assigned to user.");
+			}
+		}
+		else {
+			return $self->alert("Delivery Service '$xml_id' is not a valid delivery service.");
+		}
+	}
+	else {
+		return $self->alert("No url keys to store for delivery service '$xml_id'");
+	}
+}
+
+
 sub copy_url_sig_keys {
 	my $self                = shift;
 	my $xml_id              = $self->param('xmlId'); #copying to this service
