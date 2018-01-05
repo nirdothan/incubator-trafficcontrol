@@ -58,7 +58,11 @@ sub gen_crconfig_json {
             unless $_[0] =~ m/Prefetching multiple has_many rels deliveryservice_servers/;
     };
 
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+    my $time_label = sprintf "%.4d%.2d%.2d-%.2d%.2d%.2d", $year+1900, $mon+1, $mday,$hour,$min,$sec ;
+
     $data_obj->{'stats'}->{'CDN_name'}   = $cdn_name;
+    $data_obj->{'stats'}->{'time_label'} = $time_label;
     $data_obj->{'stats'}->{'date'}       = time();
     $data_obj->{'stats'}->{'tm_version'} = &tm_version();
     $data_obj->{'stats'}->{'tm_path'}    = $self->req->url->path->{'path'};

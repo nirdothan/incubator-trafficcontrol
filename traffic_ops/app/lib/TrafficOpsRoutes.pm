@@ -775,6 +775,10 @@ sub api_routes {
 	$r->post("/api/$version/tenants")->over( authenticated => 1, not_ldap => 1 )->to( 'Tenant#create', namespace => $namespace );
 	$r->delete("/api/$version/tenants/:id" => [ id => qr/\d+/ ] )->over( authenticated => 1, not_ldap => 1 )->to( 'Tenant#delete', namespace => $namespace );
 
+	#config state
+	$r->get( "/api/$version/config-state")->over( authenticated => 1, not_ldap => 1 )->to( 'ConfigState#show', namespace => $namespace );
+
+
 	# -- TYPES
 	# Supports ?orderby=key
 	$r->get("/api/$version/types")->over( authenticated => 1, not_ldap => 1 )->to( 'Types#index', namespace => $namespace );
