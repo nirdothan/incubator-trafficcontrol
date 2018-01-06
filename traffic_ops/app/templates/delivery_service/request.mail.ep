@@ -66,6 +66,12 @@
                 <td>Origin Test File:</td>
                 <td><%= $params->{originTestFile} %></td>
             </tr>
+            <% for my $additional_origin (@{$params->{additionalOriginURLs}}) { %>
+            <tr>
+                <td>Additional Origin URL:</td>
+                <td><%= $additional_origin %></td>
+            </tr>
+            <% } %>
             <tr>
                 <td>ACL/Whitelist to Access Origin:</td>
                 <td><%= $params->{hasOriginACLWhitelist} ? 'true' : 'false' %></td>
