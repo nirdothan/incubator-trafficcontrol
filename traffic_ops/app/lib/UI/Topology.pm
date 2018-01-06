@@ -278,6 +278,10 @@ sub gen_crconfig_json {
         { prefetch => [ 'deliveryservice_servers', 'deliveryservice_regexes', 'type' ] }
     );
 
+    my $bad_cfg_protection_value = $self->db->resultset("Parameter")->search( { config_file => 'global', name => 'bad_cfg_protection' } )
+        ->get_column('value')->single();
+    my $bad_cfg_protection = defined($bad_cfg_protection_value) ? $bad_cfg_protection_value != '0' : 0;
+
     while ( my $row = $rs_ds->next ) {
         my $protocol;
         if ( $row->type->name =~ m/DNS/ ) {
@@ -418,6 +422,34 @@ sub gen_crconfig_json {
             }
         }
 
+        if ($bad_cfg_protection && $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'sslEnabled'} eq 'true') {
+            my $ds_xml_id = $row->xml_id;
+            my $key = "$ds_xml_id-latest";
+            my $response_container = $self->riak_search( "sslkeys", "q=cdn:$cdn_name&fq=_yz_rk:*$key&start=0&rows=1000" );
+            my $response = $response_container->{'response'};
+            if (not $response->is_success()) {
+                die 'CR-Config snapshot failed: no ssl keys for DS '.$row->xml_id;
+            }
+            my $content = decode_json( $response->content )->{response}->{docs};
+            if ( scalar(@$content) < 1 ) {
+                die 'CR-Config snapshot failed: no ssl keys for DS '.$row->xml_id;;
+            }
+
+
+                my $response = $response_container->{"response"};
+        }
+
+        my $ds_type_name = $row->type->name;
+        if ($bad_cfg_protection &&  defined($ds_type_name) && ( $ds_type_name =~ /(^.*STEERING.*$)/ ) ) {
+            my %criteria;
+            $criteria{'deliveryservice'} = $row->id;
+            my $steering_targets = $self->db->resultset('SteeringTarget')->search( \%criteria )->count;
+            if ($steering_targets == 0) {
+                die 'CR-Config snapshot failed: no steering targets for DS '.$row->xml_id;
+            }
+        }
+
+
         my $geo_provider = $row->geo_provider;
         if ( $geo_provider == 1 ) {
             $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'geolocationProvider'} = 'neustarGeolocationService';
@@ -460,17 +492,17 @@ sub gen_crconfig_json {
                 && $row->http_bypass_fqdn ne "" )
             {
                 my $full = $row->http_bypass_fqdn;
-                my $port;
                 my $fqdn;
                 if ( $full =~ m/\:/ ) {
+                    my $port;
                     ( $fqdn, $port ) = split( /\:/, $full );
+                    # Specify port number only if explicitly set by the DS 'Bypass FQDN' field - issue 1493
+                    $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'bypassDestination'}->{'HTTP'}->{'port'} = $port;
                 }
                 else {
                     $fqdn = $full;
-                    $port = '80';
                 }
                 $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'bypassDestination'}->{'HTTP'}->{'fqdn'} = $fqdn;
-                $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'bypassDestination'}->{'HTTP'}->{'port'} = $port;
             }
 
             $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'regionalGeoBlocking'} = $row->regional_geo_blocking ? 'true' : 'false';
