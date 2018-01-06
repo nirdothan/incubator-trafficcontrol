@@ -19,12 +19,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,9 +53,10 @@ import com.comcast.cdn.traffic_control.traffic_router.core.router.StatTracker.Tr
 import com.comcast.cdn.traffic_control.traffic_router.core.router.StatTracker.Track.ResultDetails;
 import com.comcast.cdn.traffic_control.traffic_router.core.util.StringProtector;
 
-@SuppressWarnings({"PMD.TooManyFields","PMD.CyclomaticComplexity"})
+@SuppressWarnings({"PMD.TooManyFields","PMD.CyclomaticComplexity", "PMD.EmptyCatchBlock"})
 public class DeliveryService {
 	protected static final Logger LOGGER = Logger.getLogger(DeliveryService.class);
+	private final String routerId;
 	private final String id;
 	@JsonIgnore
 	private final JSONObject ttls;
@@ -93,6 +97,25 @@ public class DeliveryService {
 	private final boolean redirectToHttps;
 
 	public DeliveryService(final String id, final JSONObject dsJo) throws JSONException {
+		String ip = null;
+		try {
+			final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				final NetworkInterface iface = interfaces.nextElement();
+				// filters out 127.0.0.1 and inactive interfaces
+				if (iface.isLoopback() || !iface.isUp()) {
+					continue;
+				}
+
+				final Enumeration<InetAddress> addresses = iface.getInetAddresses();
+				while(addresses.hasMoreElements()) {
+					final InetAddress addr = addresses.nextElement();
+					ip = addr.getHostAddress();
+				}
+			}
+		} catch (SocketException e) {
+		}
+		this.routerId = ip == null ? "n/a" : ip;
 		this.id = id;
 		this.props = dsJo;
 		this.ttls = dsJo.optJSONObject("ttls");
@@ -577,6 +600,7 @@ public class DeliveryService {
 				responseHeaders.put(key, jo.getString(key));
 			}
 		}
+		responseHeaders.put("X-SRC-SRV", this.routerId);
 	}
 
 	public Set<String> getRequestHeaders() {
