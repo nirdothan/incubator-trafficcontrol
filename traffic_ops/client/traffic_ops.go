@@ -120,11 +120,6 @@ func Login(toURL string, toUser string, toPasswd string, insecure bool) (*Sessio
 //     to := traffic_ops.Login("user", "passwd", true)
 // subsequent calls like to.GetData("datadeliveryservice") will be authenticated.
 func LoginWithAgent(toURL string, toUser string, toPasswd string, insecure bool, userAgent string, useCache bool, requestTimeout time.Duration) (*Session, error) {
-	credentials, err := loginCreds(toUser, toPasswd)
-	if err != nil {
-		return nil, err
-	}
-
 	options := cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	}
@@ -141,6 +136,16 @@ func LoginWithAgent(toURL string, toUser string, toPasswd string, insecure bool,
 		},
 		Jar: jar,
 	}, useCache)
+
+	return to.rawLogin();
+}
+
+func (to *Session) rawLogin() (*Session, error) {
+
+	credentials, err := loginCreds(to.UserName, to.Password)
+	if err != nil {
+		return nil, err
+	}
 
 	path := "/api/1.2/user/login"
 	resp, err := to.request("POST", path, credentials)
@@ -201,6 +206,9 @@ func (to *Session) request(method, path string, body []byte) (*http.Response, er
 			HTTPStatus:     resp.Status,
 			HTTPStatusCode: resp.StatusCode,
 			URL:            url,
+		}
+		if resp.StatusCode == http.StatusUnauthorized {
+			to.rawLogin();
 		}
 		return nil, &e
 	}
