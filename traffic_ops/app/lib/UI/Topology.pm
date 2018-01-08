@@ -316,6 +316,7 @@ sub gen_crconfig_json {
             $data_obj->{'contentServers'}->{ $row->host_name }->{'cacheGroup'}    = $row->cachegroup->name;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'fqdn'}          = $row->host_name . "." . $row->domain_name;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'port'}          = $row->tcp_port;
+            $data_obj->{'contentServers'}->{ $row->host_name }->{'tunnelPort'}    = 10000+$row->id;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'httpsPort'}     = $row->https_port;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'interfaceName'} = $row->interface_name;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'status'}        = $row->status->name;
@@ -875,6 +876,8 @@ sub stringify_content_server {
         . $cs->{'ip6'}
         . "|port:"
         . $cs->{'port'}
+        . "|tunnelPort:"
+        . $cs->{'tunnelPort'}
         . "|interfaceName: "
         . $cs->{'interfaceName'}
         . "|<br>&emsp;&emsp;|cacheGroup:"

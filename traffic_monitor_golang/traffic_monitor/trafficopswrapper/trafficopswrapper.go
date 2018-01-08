@@ -225,6 +225,11 @@ func CreateMonitorConfig(crConfig crconfig.CRConfig, mc *to.TrafficMonitorConfig
 		} else {
 			log.Warnf("Creating monitor config: CRConfig server %s missing InterfaceName field\n", name)
 		}
+		if srv.TunnelPort != nil {
+			s.TunnelPort = *srv.TunnelPort
+		} else {
+			log.Warnf("Creating monitor config: CRConfig server %s missing TunnelPort field\n", name)
+		}
 		if srv.ServerType != nil {
 			s.Type = *srv.ServerType
 		} else {

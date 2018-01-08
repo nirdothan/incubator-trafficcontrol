@@ -56,6 +56,7 @@ type TrafficServer struct {
 	CacheGroup       string              `json:"cacheGroup"`
 	IP6              string              `json:"ip6"`
 	Port             int                 `json:"port"`
+	TunnelPort       int                 `json:"tunnelPort"`
 	HostName         string              `json:"hostName"`
 	FQDN             string              `json:"fqdn"`
 	InterfaceName    string              `json:"interfaceName"`

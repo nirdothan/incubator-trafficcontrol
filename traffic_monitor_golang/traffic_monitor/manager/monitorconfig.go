@@ -22,6 +22,7 @@ package manager
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -253,6 +254,7 @@ func monitorConfigListen(
 			r := strings.NewReplacer(
 				"${hostname}", srv.IP,
 				"${interface_name}", srv.InterfaceName,
+				"${tunnel_port}", strconv.Itoa(srv.TunnelPort),
 				"application=plugin.remap", "application=system",
 				"application=", "application=system",
 			)

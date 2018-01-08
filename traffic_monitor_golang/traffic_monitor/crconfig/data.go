@@ -168,6 +168,8 @@ type Server struct {
 	LocationIdTime       time.Time           `json:"-"`
 	Port                 *int                `json:"port,omitempty"`
 	PortTime             time.Time           `json:"-"`
+	TunnelPort           *int                `json:"tunnelPort,omitempty"`
+	TunnelPortTime       time.Time           `json:"-"`
 	Profile              *string             `json:"profile,omitempty"`
 	ProfileTime          time.Time           `json:"-"`
 	Status               *Status             `json:"status,omitempty"`
