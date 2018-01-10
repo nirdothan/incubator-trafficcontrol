@@ -176,6 +176,10 @@ var FormDeliveryServiceController = function(deliveryService, type, types, $scop
         $location.path($location.path() + '/static-dns-entries');
     };
 
+    $scope.viewAdditionalJsonFields = function() {
+      $location.path($location.path() + "/additional-json-fields");
+    };
+
     $scope.navigateToPath = locationUtils.navigateToPath;
 
     $scope.hasError = formUtils.hasError;
