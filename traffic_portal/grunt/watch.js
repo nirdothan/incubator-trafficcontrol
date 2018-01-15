@@ -32,6 +32,6 @@ module.exports = {
     },
     html: {
         files: ['app/**/*.tpl.html', 'app/**/index.html'],
-        tasks: ['copy:dist', 'build-js-dev ']
+        tasks: ['copy:dist', 'build-js-dev']
     }
 };
