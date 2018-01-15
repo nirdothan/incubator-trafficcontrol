@@ -18,6 +18,7 @@
         "font-awesome": "4.5.0",
         "jquery": "2.0.0",
         "json3": "3.3.2",
-        "restangular": "1.5.2"
+        "restangular": "1.5.2",
+        "jsoneditor": "https://github.com/vitalybe/jsoneditor.git#cd67870bae0707f8ae04f52f05246b131238b7d1"
     }
 }

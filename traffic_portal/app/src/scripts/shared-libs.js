@@ -56,3 +56,4 @@ require('jquery-flot-axislabels');
 // misc
 require('es5-shim');
 require('json3');
+window.JSONEditor = require('jsoneditor');
