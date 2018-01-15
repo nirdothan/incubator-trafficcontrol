@@ -24,7 +24,7 @@ module.exports = {
     },
     js: {
         files: ['<%= globalConfig.srcdir %>/**/*.js'],
-        tasks: [ 'build-dev']
+        tasks: [ 'build-js-dev']
     },
     compass: {
         files: ['<%= globalConfig.srcdir %>/**/*.{scss,sass}'],
@@ -32,6 +32,6 @@ module.exports = {
     },
     html: {
         files: ['app/**/*.tpl.html', 'app/**/index.html'],
-        tasks: ['copy:dist', 'build-dev']
+        tasks: ['copy:dist', 'build-js-dev ']
     }
 };
