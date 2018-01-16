@@ -18,8 +18,11 @@ under the License.
 -->
 
 <div class="x_panel">
-    <button class="btn btn-default" title="Refresh" ng-click="refresh()"><i class="fa fa-refresh"></i></button>
-    <div ng-json-editor ng-model="jsonEdtiorData.json" options="jsonEdtiorData.options" style="width: 400px; height: 300px;"></div>
+    <div ng-json-editor ng-model="jsonEdtiorConfig.json" options="jsonEdtiorConfig.options" style="width: 400px; height: 300px;"></div>
+    <label for="radio_easyMode">Easy mode</label>
+    <input name="jsonEditorMode" type="radio" id="radio_easyMode" ng-change="onModeChange()" ng-model="selectedMode" value="easy" />
+    <label for="radio_fullMode">Full mode</label>
+    <input name="jsonEditorMode" type="radio" id="radio_fullMode" ng-change="onModeChange()" ng-model="selectedMode" value="full" />
 </div>
 
 

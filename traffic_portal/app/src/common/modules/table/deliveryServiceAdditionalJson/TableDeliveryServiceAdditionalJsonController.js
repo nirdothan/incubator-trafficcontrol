@@ -29,6 +29,7 @@ var TableDeliveryServiceServersController = function(
 
     return data;
   }
+
   function createSchemaFromMappings(mappings) {
     const schema = {
       title: "Validation schema",
@@ -56,28 +57,75 @@ var TableDeliveryServiceServersController = function(
   }
 
   function tokenTransformFullToPartialFunc(tokens) {
-    return tokens.filter(function(token) { return 'pathSegment' in token; });
+    return tokens.filter(function(token) {
+      return "pathSegment" in token;
+    });
   }
+
   function tokenTransformPartialToFullFunc(currentTokens, newTokens) {
     if (currentTokens) {
-      return currentTokens.filter(function(token) { return !('pathSegment' in token); }).concat(newTokens);
+      return currentTokens
+        .filter(function(token) {
+          return !("pathSegment" in token);
+        })
+        .concat(newTokens);
     } else {
       return newTokens;
     }
   }
+
   function isNull(value) {
     return value === null;
   }
 
-  function convertDataToEasyData(data, mappings) {
+  function convertFullDataToEasyData(fullData, mappings) {
     const friendlyJson = {};
     mappings.forEach(function(mapping) {
-      const value = lodash.get(data, mapping.from, mapping.default);
+      const value = lodash.get(fullData, mapping.from, mapping.default);
       const transformedValue = mapping.transformFullToPartialFunc ? mapping.transformFullToPartialFunc(value) : value;
       lodash.set(friendlyJson, mapping.to, transformedValue);
     });
     return friendlyJson;
   }
+
+  function convertEasyDataToFullData(easyData, mappings, currentFullData) {
+    var newFullData = angular.copy(currentFullData);
+
+    mappings.forEach(function(mapping) {
+      const newValue = lodash.get(easyData, mapping.to, null);
+      const currentValue = lodash.get(newFullData, mapping.from, null);
+
+      var transformedValue = newValue;
+      if (mapping.transformPartialToFullFunc) {
+        transformedValue = mapping.transformPartialToFullFunc(currentValue, newValue);
+      }
+
+      if (mapping.discardIf && mapping.discardIf(transformedValue)) {
+        lodash.unset(newFullData, mapping.from);
+      } else {
+        lodash.set(newFullData, mapping.from, transformedValue);
+      }
+    });
+
+    return newFullData;
+  }
+
+  function getJsonEditorEasyDataConfig(fullData, mappings, schema) {
+    return {
+      json: convertFullDataToEasyData(fullData, mappings),
+      options: { mode: "tree", schema: schema },
+    };
+  }
+
+  function getJsonEditorFullDataConfig(easyData, mappings, schema, currentFullData) {
+    return {
+      json: convertEasyDataToFullData(easyData, mappings, currentFullData),
+      options: { mode: "code", schema: null },
+    };
+  }
+
+  var EASY_MODE = "easy";
+  var FULL_MODE = "full";
 
   var mappings = [
     // Subitem
@@ -342,16 +390,20 @@ var TableDeliveryServiceServersController = function(
       },
     },
   ];
-  var originalData = extractJsonFromRemapText(deliveryService);
+  var originalFullData = extractJsonFromRemapText(deliveryService);
 
-  var data = angular.copy(originalData);
+  var fullData = angular.copy(originalFullData);
   var schema = createSchemaFromMappings(mappings);
-  var easyData = convertDataToEasyData(data, mappings);
 
-  $scope.jsonEdtiorData = { json: easyData, options: { mode: "tree", schema: schema } };
+  $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig(fullData, mappings, schema);
+  $scope.selectedMode = EASY_MODE;
 
-  $scope.refresh = function() {
-    alert("refreshing!");
+  $scope.onModeChange = function() {
+    if ($scope.selectedMode === EASY_MODE) {
+      $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig(fullData, mappings, schema);
+    } else if ($scope.selectedMode === FULL_MODE) {
+      $scope.jsonEdtiorConfig = getJsonEditorFullDataConfig($scope.jsonEdtiorConfig.json, mappings, schema, fullData);
+    }
   };
 };
 
