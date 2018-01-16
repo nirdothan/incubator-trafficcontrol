@@ -10,11 +10,11 @@ var TableDeliveryServiceServersController = function(
   var originalData = {};
   var regex = /^#\s*?config=(.+$)/;
 
-  if(!deliveryService || deliveryService.length < 1) {
+  if(!deliveryService) {
     throw new Error('expected a deliveryService, got: ' + deliveryService);
   }
 
-  var remapText = deliveryService[0].remapText;
+  var remapText = deliveryService.remapText;
   try {
     if (remapText) {
       var match = remapText.match(regex);
