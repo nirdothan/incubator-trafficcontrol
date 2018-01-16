@@ -1,129 +1,8 @@
 var TableDeliveryServiceServersController = function(
   deliveryService,
   $scope,
-  $state,
-  $uibModal,
-  locationUtils,
-  serverUtils,
-  deliveryServiceService
+  $location
 ) {
-  function extractJsonFromRemapText(deliveryService) {
-    var regex = /^#\s*?config=(.+$)/;
-    var data = {};
-
-    if (!deliveryService) {
-      throw new Error("expected a deliveryService, got: " + deliveryService);
-    }
-
-    var remapText = deliveryService.remapText;
-    try {
-      if (remapText) {
-        var match = remapText.match(regex);
-        if (match) {
-          data = JSON.parse(match[1]);
-        }
-      }
-    } catch (e) {
-      console.error("failed to find a JSON object in: " + remapText);
-    }
-
-    return data;
-  }
-
-  function createSchemaFromMappings(mappings) {
-    const schema = {
-      title: "Validation schema",
-      type: "object",
-      additionalProperties: false,
-      properties: {},
-    };
-
-    mappings.forEach(function(mapping) {
-      var parts = mapping.to.split(".");
-
-      var currentProperties = schema;
-      for (var i = 0; i < parts.length - 1; i++) {
-        if (!currentProperties["properties"][parts[i]]) {
-          currentProperties["properties"][parts[i]] = { type: "object", properties: {} };
-        }
-
-        currentProperties = currentProperties["properties"][parts[i]];
-      }
-
-      currentProperties.properties[parts[parts.length - 1]] = mapping.schema;
-    });
-
-    return schema;
-  }
-
-  function tokenTransformFullToPartialFunc(tokens) {
-    return tokens.filter(function(token) {
-      return "pathSegment" in token;
-    });
-  }
-
-  function tokenTransformPartialToFullFunc(currentTokens, newTokens) {
-    if (currentTokens) {
-      return currentTokens
-        .filter(function(token) {
-          return !("pathSegment" in token);
-        })
-        .concat(newTokens);
-    } else {
-      return newTokens;
-    }
-  }
-
-  function isNull(value) {
-    return value === null;
-  }
-
-  function convertFullDataToEasyData(fullData, mappings) {
-    const friendlyJson = {};
-    mappings.forEach(function(mapping) {
-      const value = lodash.get(fullData, mapping.from, mapping.default);
-      const transformedValue = mapping.transformFullToPartialFunc ? mapping.transformFullToPartialFunc(value) : value;
-      lodash.set(friendlyJson, mapping.to, transformedValue);
-    });
-    return friendlyJson;
-  }
-
-  function convertEasyDataToFullData(easyData, mappings, currentFullData) {
-    var newFullData = angular.copy(currentFullData);
-
-    mappings.forEach(function(mapping) {
-      const newValue = lodash.get(easyData, mapping.to, null);
-      const currentValue = lodash.get(newFullData, mapping.from, null);
-
-      var transformedValue = newValue;
-      if (mapping.transformPartialToFullFunc) {
-        transformedValue = mapping.transformPartialToFullFunc(currentValue, newValue);
-      }
-
-      if (mapping.discardIf && mapping.discardIf(transformedValue)) {
-        lodash.unset(newFullData, mapping.from);
-      } else {
-        lodash.set(newFullData, mapping.from, transformedValue);
-      }
-    });
-
-    return newFullData;
-  }
-
-  function getJsonEditorEasyDataConfig(fullData, mappings, schema) {
-    return {
-      json: convertFullDataToEasyData(fullData, mappings),
-      options: { mode: "tree", schema: schema },
-    };
-  }
-
-  function getJsonEditorFullDataConfig(easyData, mappings, schema, currentFullData) {
-    return {
-      json: convertEasyDataToFullData(easyData, mappings, currentFullData),
-      options: { mode: "code", schema: null },
-    };
-  }
-
   var EASY_MODE = "easy";
   var FULL_MODE = "full";
 
@@ -390,30 +269,170 @@ var TableDeliveryServiceServersController = function(
       },
     },
   ];
-  var originalFullData = extractJsonFromRemapText(deliveryService);
 
-  var fullData = angular.copy(originalFullData);
+  function extractJsonFromRemapText(deliveryService) {
+    var regex = /^#\s*?config=(.+$)/;
+    var data = {};
+
+    if (!deliveryService) {
+      throw new Error("expected a deliveryService, got: " + deliveryService);
+    }
+
+    var remapText = deliveryService.remapText;
+    try {
+      if (remapText) {
+        var match = remapText.match(regex);
+        if (match) {
+          data = JSON.parse(match[1]);
+        }
+      }
+    } catch (e) {
+      console.error("failed to find a JSON object in: " + remapText);
+    }
+
+    return data;
+  }
+
+  function createSchemaFromMappings(mappings) {
+    const schema = {
+      title: "Validation schema",
+      type: "object",
+      additionalProperties: false,
+      properties: {},
+    };
+
+    mappings.forEach(function(mapping) {
+      var parts = mapping.to.split(".");
+
+      var currentProperties = schema;
+      for (var i = 0; i < parts.length - 1; i++) {
+        if (!currentProperties["properties"][parts[i]]) {
+          currentProperties["properties"][parts[i]] = { type: "object", properties: {} };
+        }
+
+        currentProperties = currentProperties["properties"][parts[i]];
+      }
+
+      currentProperties.properties[parts[parts.length - 1]] = mapping.schema;
+    });
+
+    return schema;
+  }
+
+  function tokenTransformFullToPartialFunc(tokens) {
+    return tokens.filter(function(token) {
+      return "pathSegment" in token;
+    });
+  }
+
+  function tokenTransformPartialToFullFunc(currentTokens, newTokens) {
+    if (currentTokens) {
+      return currentTokens
+        .filter(function(token) {
+          return !("pathSegment" in token);
+        })
+        .concat(newTokens);
+    } else {
+      return newTokens;
+    }
+  }
+
+  function isNull(value) {
+    return value === null;
+  }
+
+  function convertFullDataToEasyData(fullData, mappings) {
+    const friendlyJson = {};
+    mappings.forEach(function(mapping) {
+      const value = lodash.get(fullData, mapping.from, mapping.default);
+      const transformedValue = mapping.transformFullToPartialFunc ? mapping.transformFullToPartialFunc(value) : value;
+      lodash.set(friendlyJson, mapping.to, transformedValue);
+    });
+    return friendlyJson;
+  }
+
+  function convertEasyDataToFullData(easyData, mappings, currentFullData) {
+    var newFullData = angular.copy(currentFullData);
+
+    mappings.forEach(function(mapping) {
+      const newValue = lodash.get(easyData, mapping.to, null);
+      const currentValue = lodash.get(newFullData, mapping.from, null);
+
+      var transformedValue = newValue;
+      if (mapping.transformPartialToFullFunc) {
+        transformedValue = mapping.transformPartialToFullFunc(currentValue, newValue);
+      }
+
+      if (mapping.discardIf && mapping.discardIf(transformedValue)) {
+        lodash.unset(newFullData, mapping.from);
+      } else {
+        lodash.set(newFullData, mapping.from, transformedValue);
+      }
+    });
+
+    return newFullData;
+  }
+
+  function getJsonEditorEasyDataConfig(fullData, mappings, schema) {
+    return {
+      json: convertFullDataToEasyData(fullData, mappings),
+      options: { mode: "tree", schema: schema },
+    };
+  }
+
+  function getJsonEditorFullDataConfig(fullData) {
+    return {
+      json: fullData,
+      options: { mode: "code", schema: null },
+    };
+  }
+
+  function updateFullDataFromJsonEditor() {
+    if ($scope.selectedMode === EASY_MODE) {
+      $scope.fullData = convertEasyDataToFullData($scope.jsonEdtiorConfig.json, mappings, $scope.fullData);
+    } else if ($scope.selectedMode === FULL_MODE) {
+      $scope.fullData = $scope.jsonEdtiorConfig.json;
+    }
+  }
+
+  var originalFullData = extractJsonFromRemapText(deliveryService);
   var schema = createSchemaFromMappings(mappings);
 
-  $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig(fullData, mappings, schema);
+  $scope.fullData = angular.copy(originalFullData);
+  $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
   $scope.selectedMode = EASY_MODE;
 
   $scope.onModeChange = function() {
     if ($scope.selectedMode === EASY_MODE) {
-      $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig(fullData, mappings, schema);
+      $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
     } else if ($scope.selectedMode === FULL_MODE) {
-      $scope.jsonEdtiorConfig = getJsonEditorFullDataConfig($scope.jsonEdtiorConfig.json, mappings, schema, fullData);
+      $scope.fullData = convertEasyDataToFullData($scope.jsonEdtiorConfig.json, mappings, $scope.fullData);
+      $scope.jsonEdtiorConfig = getJsonEditorFullDataConfig($scope.fullData);
     }
   };
+  $scope.onUpdate = function() {
+    updateFullDataFromJsonEditor();
+    deliveryService.remapText = "# config=" + $scope.fullData;
+    deliveryServiceService.createDeliveryService(deliveryService);
+    //$location.path('/configure/delivery-services/' + deliveryService.id);
+  };
+
+  $scope.onCancel = function() {
+    $location.path('/configure/delivery-services/' + deliveryService.id);
+  }
+
+  $scope.$watch(
+    "jsonEdtiorConfig.json",
+    function(newValue, oldValue) {
+      updateFullDataFromJsonEditor();
+    },
+    true
+  );
 };
 
 TableDeliveryServiceServersController.$inject = [
   "deliveryService",
   "$scope",
-  "$state",
-  "$uibModal",
-  "locationUtils",
-  "serverUtils",
-  "deliveryServiceService",
+  "$location"
 ];
 module.exports = TableDeliveryServiceServersController;
