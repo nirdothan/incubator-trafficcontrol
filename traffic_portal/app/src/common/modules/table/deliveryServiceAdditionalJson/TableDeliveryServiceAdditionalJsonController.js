@@ -395,10 +395,10 @@ var TableDeliveryServiceServersController = function(
     }
   }
 
-  var originalFullData = extractJsonFromRemapText(deliveryService);
   var schema = createSchemaFromMappings(mappings);
 
-  $scope.fullData = angular.copy(originalFullData);
+  $scope.originalFullData = extractJsonFromRemapText(deliveryService);
+  $scope.fullData = angular.copy($scope.originalFullData);
   $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
   $scope.selectedMode = EASY_MODE;
 
@@ -428,13 +428,6 @@ var TableDeliveryServiceServersController = function(
     },
     true
   );
-
-  var left = { a: 3, b: 4 };
-  var right = { a: 5, c: 9 };
-  var delta = jsondiffpatch.diff(left, right);
-
-  // beautiful html diff
-  document.getElementById('visual').innerHTML = jsondiffpatch.formatters.html.format(delta, left);
 };
 
 TableDeliveryServiceServersController.$inject = [

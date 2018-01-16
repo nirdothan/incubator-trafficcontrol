@@ -25,7 +25,7 @@ under the License.
     <input name="jsonEditorMode" type="radio" id="radio_fullMode" ng-change="onModeChange()" ng-model="selectedMode" value="full" />
     <button type="button" class="btn btn-primary" ng-click="onUpdate()">Update</button>
     <button type="button" class="btn btn-danger" ng-click="onCancel()">Cancel</button>
-    <div id="visual"></div>
+    <div ng-json-diff-patch ng-model="jsonEdtiorConfig.json"></div>
 </div>
 
 

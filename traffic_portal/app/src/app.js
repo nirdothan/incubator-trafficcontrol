@@ -291,6 +291,7 @@ var trafficPortal = angular.module('trafficPortal', [
         // directives
         require('./common/directives/match').name,
         require('./common/directives/ngJsonEditor').name,
+        require('./common/directives/ngJsonDiffPatch').name,
 
         // services
         require('./common/service/application').name,
