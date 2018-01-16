@@ -53,6 +53,11 @@ under the License.
 
         <script src="resources/assets/js/underscore-min_1.8.3.js"></script>
         <script src="resources/assets/js/jquery.dataTables.min.js"></script>
+        <script src="resources/assets/js/lodash.min.js"></script>
+        <script>
+          // the global _ will now be underscore
+          window.lodash = _.noConflict();
+        </script>
 
     </body>
 
