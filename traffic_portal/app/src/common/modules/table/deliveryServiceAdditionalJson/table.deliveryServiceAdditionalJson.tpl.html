@@ -18,7 +18,8 @@ under the License.
 -->
 
 <div class="x_panel">
-    <div id="jsoneditor">Hi</div>
+    <button class="btn btn-default" title="Refresh" ng-click="refresh()"><i class="fa fa-refresh"></i></button>
+    <div ng-json-editor ng-model="obj.data" options="obj.options" style="width: 400px; height: 300px;"></div>
 </div>
 
 
