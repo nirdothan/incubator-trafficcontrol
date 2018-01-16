@@ -25,7 +25,6 @@ var NgJsonEditor = function($timeout) {
     require: "ngModel",
     scope: { options: "=", ngJsoneditor: "=", preferText: "=" },
     link: function($scope, element, attrs, ngModel) {
-      alert("hi")
       var debounceTo, debounceFrom;
       var editor;
       var internalTrigger = false;
