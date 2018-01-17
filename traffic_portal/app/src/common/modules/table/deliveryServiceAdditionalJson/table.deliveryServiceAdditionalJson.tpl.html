@@ -18,13 +18,17 @@ under the License.
 -->
 
 <div class="x_panel additional-json-editor">
-    <div class="header">
-        <h2>Additional JSON configuration</h2>
-
-        <div class="buttons">
+    <div class="x_title">
+        <ol class="breadcrumb pull-left">
+            <li><a ng-click="navigateToPath('/configure/delivery-services')">Delivery Services</a></li>
+            <li><a ng-click="navigateToPath('/configure/delivery-services/' + deliveryService.id + '?type=' + deliveryService.type)">{{deliveryService.displayName}}</a></li>
+            <li class="active">Additional JSON configuration</li>
+        </ol>
+        <div class="pull-right">
             <button type="button" class="btn btn-danger" ng-click="onRevert()" ng-disabled="isUpdateInProgress">Revert</button>
             <button type="button" class="btn btn-primary" ng-click="onUpdate()" ng-disabled="isUpdateInProgress">Update</button>
         </div>
+        <div class="clearfix"></div>
     </div>
     <div class="content">
         <div class="editing-container">

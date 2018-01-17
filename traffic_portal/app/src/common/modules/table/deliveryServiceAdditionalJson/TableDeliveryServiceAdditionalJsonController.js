@@ -408,6 +408,7 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
 
   var schema = createSchemaFromMappings(mappings);
 
+  $scope.deliveryService = deliveryService;
   $scope.originalFullData = extractJsonFromRemapText(deliveryService);
   $scope.fullData = angular.copy($scope.originalFullData);
   $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
