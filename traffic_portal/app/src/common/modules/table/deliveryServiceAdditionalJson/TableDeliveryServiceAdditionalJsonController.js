@@ -1,4 +1,4 @@
-var TableDeliveryServiceServersController = function(deliveryService, deliveryServiceService, $scope, $location) {
+var TableDeliveryServiceServersController = function(deliveryService, deliveryServiceService, $scope, messageModel) {
   var EASY_MODE = "easy";
   var FULL_MODE = "full";
 
@@ -284,7 +284,12 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
         }
       }
     } catch (e) {
-      console.error("failed to find a JSON object in: " + remapText);
+      _friendlyExceptionNotification(
+        e,
+        "Failed to find a valid JSON object in 'Raw remap text', assuming no existing JSON object. Found value: \"" +
+          remapText +
+          '"'
+      );
     }
 
     return data;
@@ -376,7 +381,7 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
       delete newFullData.cacheControlKnobs;
     }
 
-    if(newFullData.origins && newFullData.origins.hosts && newFullData.origins.hosts.length === 0) {
+    if (newFullData.origins && newFullData.origins.hosts && newFullData.origins.hosts.length === 0) {
       delete newFullData.origins;
     }
 
@@ -413,47 +418,85 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     }
   }
 
-  var schema = createSchemaFromMappings(mappings);
+  function _friendlyExceptionNotification(e, customMessage) {
+    console.error("Message: " + (customMessage || "None"));
+    console.error(e);
 
-  $scope.deliveryService = deliveryService;
-  $scope.originalFullData = extractJsonFromRemapText(deliveryService);
-  $scope.fullData = angular.copy($scope.originalFullData);
-  $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
-  $scope.selectedMode = EASY_MODE;
-  $scope.isUpdateInProgress = false;
-
-  $scope.onModeChange = function() {
-    if ($scope.selectedMode === FULL_MODE) {
-      $scope.fullData = convertEasyDataToFullData($scope.jsonEdtiorConfig.json, mappings, $scope.fullData);
+    var friendlyMessage =
+      "Additional JSON editor failed - Please report this issue to the developers and don't use it to edit the JSON";
+    if (customMessage) {
+      friendlyMessage = customMessage;
     }
 
-    updateJsonEditorFromFullData();
+    messageModel.setMessages([{ level: "error", text: friendlyMessage }], false);
+  }
+
+  var schema = createSchemaFromMappings(mappings);
+
+  try {
+    $scope.deliveryService = deliveryService;
+    $scope.originalFullData = extractJsonFromRemapText(deliveryService);
+    $scope.fullData = angular.copy($scope.originalFullData);
+    $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
+    $scope.selectedMode = EASY_MODE;
+    $scope.isUpdateInProgress = false;
+  } catch (e) {
+    _friendlyExceptionNotification(e);
+  }
+
+  $scope.onModeChange = function() {
+    try {
+      if ($scope.selectedMode === FULL_MODE) {
+        $scope.fullData = convertEasyDataToFullData($scope.jsonEdtiorConfig.json, mappings, $scope.fullData);
+      }
+
+      updateJsonEditorFromFullData();
+    } catch (e) {
+      _friendlyExceptionNotification(e);
+    }
   };
   $scope.onUpdate = function() {
-    updateFullDataFromJsonEditor();
-    deliveryService.remapText = "# config=" + JSON.stringify($scope.fullData);
+    try {
+      updateFullDataFromJsonEditor();
+      deliveryService.remapText = "# config=" + JSON.stringify($scope.fullData);
 
-    $scope.isUpdateInProgress = true;
-    deliveryServiceService.updateDeliveryService(deliveryService).then(function() {
-      $scope.originalFullData = $scope.fullData;
-      $scope.isUpdateInProgress = false;
-    });
-    //$location.path('/configure/delivery-services/' + deliveryService.id);
+      $scope.isUpdateInProgress = true;
+      deliveryServiceService
+        .updateDeliveryService(deliveryService)
+        .then(function() {
+          $scope.originalFullData = $scope.fullData;
+          $scope.isUpdateInProgress = false;
+        })
+        .catch(function(e) {
+          _friendlyExceptionNotification(e, "Failed to save changes");
+        });
+      //$location.path('/configure/delivery-services/' + deliveryService.id);
+    } catch (e) {
+      _friendlyExceptionNotification(e);
+    }
   };
 
   $scope.onRevert = function() {
-    $scope.fullData = $scope.originalFullData;
-    updateJsonEditorFromFullData();
+    try {
+      $scope.fullData = $scope.originalFullData;
+      updateJsonEditorFromFullData();
+    } catch (e) {
+      _friendlyExceptionNotification(e);
+    }
   };
 
   $scope.$watch(
     "jsonEdtiorConfig.json",
     function(newValue, oldValue) {
-      updateFullDataFromJsonEditor();
+      try {
+        updateFullDataFromJsonEditor();
+      } catch (e) {
+        _friendlyExceptionNotification(e);
+      }
     },
     true
   );
 };
 
-TableDeliveryServiceServersController.$inject = ["deliveryService", "deliveryServiceService", "$scope", "$location"];
+TableDeliveryServiceServersController.$inject = ["deliveryService", "deliveryServiceService", "$scope", "messageModel"];
 module.exports = TableDeliveryServiceServersController;
