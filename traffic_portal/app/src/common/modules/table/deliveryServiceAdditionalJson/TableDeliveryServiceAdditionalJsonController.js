@@ -42,7 +42,7 @@ var TableDeliveryServiceServersController = function(
     {
       from: "subitem[0].elements[0].tokens",
       to: "subitem.tokens",
-      default: 1,
+      default: [],
       transformFullToPartialFunc: tokenTransformFullToPartialFunc,
       transformPartialToFullFunc: tokenTransformPartialToFullFunc,
       schema: {
@@ -75,6 +75,7 @@ var TableDeliveryServiceServersController = function(
       from: "serverResponseEchoRules",
       to: "cache.serverResponseEchoRules",
       default: [],
+      discardIf: isEmpty,
       schema: {
         type: "array",
         items: {
@@ -341,6 +342,10 @@ var TableDeliveryServiceServersController = function(
     return value === null;
   }
 
+  function isEmpty(value) {
+    return value === null || value.length === 0;
+  }
+
   function convertFullDataToEasyData(fullData, mappings) {
     const friendlyJson = {};
     mappings.forEach(function(mapping) {
@@ -369,6 +374,10 @@ var TableDeliveryServiceServersController = function(
         lodash.set(newFullData, mapping.from, transformedValue);
       }
     });
+
+    // Special post-processing
+
+
 
     return newFullData;
   }
