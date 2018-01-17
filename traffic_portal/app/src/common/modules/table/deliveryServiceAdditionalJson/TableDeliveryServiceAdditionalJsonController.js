@@ -372,6 +372,13 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     });
 
     // Special post-processing
+    if (newFullData.cacheControlKnobs && Object.keys(newFullData.cacheControlKnobs).length === 0) {
+      delete newFullData.cacheControlKnobs;
+    }
+
+    if(newFullData.origins && newFullData.origins.hosts && newFullData.origins.hosts.length === 0) {
+      delete newFullData.origins;
+    }
 
     return newFullData;
   }

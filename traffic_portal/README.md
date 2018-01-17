@@ -22,3 +22,10 @@
 An AngularJS client served from a lightweight Node.js web server. Traffic Portal was designed to consume the Traffic Ops API.
 
 Installation / configuration instructions are found at https://github.com/apache/incubator-trafficcontrol/tree/master/traffic_portal/build
+
+# Updating JsonEditor
+
+We are using a very modified version of JsonEditor. To update it:
+
+* Push the changes to: https://github.com/vitalybe/jsoneditor
+* Run: `bower install -S https://github.com/vitalybe/jsoneditor.git#master`
