@@ -1,7 +1,7 @@
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
+distributed with this work for additional
 regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
@@ -17,15 +17,33 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<div class="x_panel">
-    <div ng-json-editor ng-model="jsonEdtiorConfig.json" options="jsonEdtiorConfig.options" style="width: 400px; height: 300px;"></div>
-    <label for="radio_easyMode">Easy mode</label>
-    <input name="jsonEditorMode" type="radio" id="radio_easyMode" ng-change="onModeChange()" ng-model="selectedMode" value="easy" />
-    <label for="radio_fullMode">Full mode</label>
-    <input name="jsonEditorMode" type="radio" id="radio_fullMode" ng-change="onModeChange()" ng-model="selectedMode" value="full" />
-    <button type="button" class="btn btn-primary" ng-click="onUpdate()">Update</button>
-    <button type="button" class="btn btn-danger" ng-click="onCancel()">Cancel</button>
-    <div ng-json-diff-patch ng-model="jsonEdtiorConfig.json"></div>
+<div class="x_panel additional-json-editor">
+    <div class="header">
+        <h2>Additional JSON configuration</h2>
+
+        <div class="buttons">
+            <button type="button" class="btn btn-primary" ng-click="onUpdate()">Update</button>
+            <button type="button" class="btn btn-danger" ng-click="onCancel()">Cancel</button>
+        </div>
+    </div>
+    <div class="content">
+        <div class="editing-container">
+            <div class="editing-header">
+                <h3>Editing</h3>
+                <div class="mode-switch">
+                    <input name="jsonEditorMode" type="radio" id="radio_easyMode" ng-change="onModeChange()" ng-model="selectedMode" value="easy" />
+                    <label for="radio_easyMode">Easy mode</label>
+                    <input name="jsonEditorMode" type="radio" id="radio_fullMode" ng-change="onModeChange()" ng-model="selectedMode" value="full" />
+                    <label for="radio_fullMode">Full mode</label>
+                </div>
+            </div>
+            <div class="editor" ng-json-editor ng-model="jsonEdtiorConfig.json" options="jsonEdtiorConfig.options"></div>
+        </div>
+        <div class="preview-container">
+            <h3>Preview - What changed?</h3>
+            <div class="preview" ng-json-diff-patch ng-model="jsonEdtiorConfig.json"></div>
+        </div>
+    </div>
 </div>
 
 
