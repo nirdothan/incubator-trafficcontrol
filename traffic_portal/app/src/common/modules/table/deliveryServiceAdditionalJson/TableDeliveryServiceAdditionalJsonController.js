@@ -386,14 +386,14 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
   function getJsonEditorEasyDataConfig(fullData, mappings, schema) {
     return {
       json: convertFullDataToEasyData(fullData, mappings),
-      options: { mode: "tree", schema: schema },
+      options: { mode: "tree", schema: schema, history: false },
     };
   }
 
   function getJsonEditorFullDataConfig(fullData) {
     return {
       json: fullData,
-      options: { mode: "code", schema: null },
+      options: { mode: "code", schema: null, history: false },
     };
   }
 
