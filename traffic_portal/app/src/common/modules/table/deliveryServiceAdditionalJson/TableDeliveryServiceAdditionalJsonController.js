@@ -1,8 +1,4 @@
-var TableDeliveryServiceServersController = function(
-  deliveryService,
-  $scope,
-  $location
-) {
+var TableDeliveryServiceServersController = function(deliveryService, deliveryServiceService, $scope, $location) {
   var EASY_MODE = "easy";
   var FULL_MODE = "full";
 
@@ -377,8 +373,6 @@ var TableDeliveryServiceServersController = function(
 
     // Special post-processing
 
-
-
     return newFullData;
   }
 
@@ -404,31 +398,45 @@ var TableDeliveryServiceServersController = function(
     }
   }
 
+  function updateJsonEditorFromFullData() {
+    if ($scope.selectedMode === EASY_MODE) {
+      $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
+    } else if ($scope.selectedMode === FULL_MODE) {
+      $scope.jsonEdtiorConfig = getJsonEditorFullDataConfig($scope.fullData);
+    }
+  }
+
   var schema = createSchemaFromMappings(mappings);
 
   $scope.originalFullData = extractJsonFromRemapText(deliveryService);
   $scope.fullData = angular.copy($scope.originalFullData);
   $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
   $scope.selectedMode = EASY_MODE;
+  $scope.isUpdateInProgress = false;
 
   $scope.onModeChange = function() {
-    if ($scope.selectedMode === EASY_MODE) {
-      $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
-    } else if ($scope.selectedMode === FULL_MODE) {
+    if ($scope.selectedMode === FULL_MODE) {
       $scope.fullData = convertEasyDataToFullData($scope.jsonEdtiorConfig.json, mappings, $scope.fullData);
-      $scope.jsonEdtiorConfig = getJsonEditorFullDataConfig($scope.fullData);
     }
+
+    updateJsonEditorFromFullData();
   };
   $scope.onUpdate = function() {
     updateFullDataFromJsonEditor();
-    deliveryService.remapText = "# config=" + $scope.fullData;
-    deliveryServiceService.createDeliveryService(deliveryService);
+    deliveryService.remapText = "# config=" + JSON.stringify($scope.fullData);
+
+    $scope.isUpdateInProgress = true;
+    deliveryServiceService.updateDeliveryService(deliveryService).then(function() {
+      $scope.originalFullData = $scope.fullData;
+      $scope.isUpdateInProgress = false;
+    });
     //$location.path('/configure/delivery-services/' + deliveryService.id);
   };
 
-  $scope.onCancel = function() {
-    $location.path('/configure/delivery-services/' + deliveryService.id);
-  }
+  $scope.onRevert = function() {
+    $scope.fullData = $scope.originalFullData;
+    updateJsonEditorFromFullData();
+  };
 
   $scope.$watch(
     "jsonEdtiorConfig.json",
@@ -439,9 +447,5 @@ var TableDeliveryServiceServersController = function(
   );
 };
 
-TableDeliveryServiceServersController.$inject = [
-  "deliveryService",
-  "$scope",
-  "$location"
-];
+TableDeliveryServiceServersController.$inject = ["deliveryService", "deliveryServiceService", "$scope", "$location"];
 module.exports = TableDeliveryServiceServersController;

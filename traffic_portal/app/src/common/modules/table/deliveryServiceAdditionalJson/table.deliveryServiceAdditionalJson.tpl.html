@@ -22,8 +22,8 @@ under the License.
         <h2>Additional JSON configuration</h2>
 
         <div class="buttons">
-            <button type="button" class="btn btn-primary" ng-click="onUpdate()">Update</button>
-            <button type="button" class="btn btn-danger" ng-click="onCancel()">Cancel</button>
+            <button type="button" class="btn btn-danger" ng-click="onRevert()" ng-disabled="isUpdateInProgress">Revert</button>
+            <button type="button" class="btn btn-primary" ng-click="onUpdate()" ng-disabled="isUpdateInProgress">Update</button>
         </div>
     </div>
     <div class="content">
