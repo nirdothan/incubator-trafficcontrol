@@ -43,7 +43,7 @@ module.exports = {
                                 'jquery/jquery.min.js',
                                 'json3/lib/json3.min.js',
                                 'restangular/dist/restangular.min.js',
-                                'jsoneditor/dist/jsoneditor.js'
+                                'jsoneditor/dist/jsoneditor.min.js'
                             ]
                     },
                     {
