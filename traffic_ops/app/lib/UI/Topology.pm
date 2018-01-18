@@ -422,6 +422,11 @@ sub gen_crconfig_json {
             }
         }
 
+        my $ds_type_name = $row->type->name;
+        if ($bad_cfg_protection && scalar(@server_subrows) == 0 && not ( $ds_type_name =~ /(^.*STEERING.*$)/ )){
+            die 'CR-Config snapshot failed: no assigned servers for DS '.$row->xml_id;
+        }
+
         if ($bad_cfg_protection && $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'sslEnabled'} eq 'true') {
             my $ds_xml_id = $row->xml_id;
             my $key = "$ds_xml_id-latest";
@@ -439,7 +444,6 @@ sub gen_crconfig_json {
                 my $response = $response_container->{"response"};
         }
 
-        my $ds_type_name = $row->type->name;
         if ($bad_cfg_protection &&  defined($ds_type_name) && ( $ds_type_name =~ /(^.*STEERING.*$)/ ) ) {
             my %criteria;
             $criteria{'deliveryservice'} = $row->id;
