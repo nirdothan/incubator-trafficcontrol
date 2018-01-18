@@ -62,8 +62,8 @@ sub show {
 	$naive_db_state_label =~ s/ /-/;
 
 
-	my @data = ();
-	push(@data, {
+	my @config_state = ();
+	push(@config_state, {
 			"FormatVersion" => 1,
 			"QueueUpdate"   => {
 				"Label" => $queue_update_label_string,
@@ -79,7 +79,7 @@ sub show {
 			}
 		}
 	);
-	$self->success( \@data );
+	$self->success( \@config_state );
 }
 
 

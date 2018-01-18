@@ -61,8 +61,62 @@ sub gen_crconfig_json {
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
     my $time_label = sprintf "%.4d%.2d%.2d-%.2d%.2d%.2d", $year+1900, $mon+1, $mday,$hour,$min,$sec ;
 
+    ###START COPY FROM ConfigState
+    my $queue_update_label_prefix = $self->db->resultset("Parameter")->search( { config_file => 'global', name => 'queue_update_label_prefix' } )
+        ->get_column('value')->single();
+    my $queue_update_time = $self->db->resultset("Parameter")->search( { config_file => 'global', name => 'queue_update_time' } )
+        ->get_column('value')->single();
+    my $queue_update_label_string = $queue_update_label_prefix.":".$queue_update_time;
+
+    my @tables = ( "Deliveryservice", "DeliveryserviceServer");
+    my @db_state;
+    #DB label will not be unique i using only "last update time" as row may be deleted with no effect on this field
+    #Hash of the entire table may be better but expensive
+    my $naive_db_state_label = "";
+    my $table;
+    foreach $table (@tables) {
+        my $row_last_updated = $self->db->resultset($table)->search( undef )->get_column('last_updated')->max();
+        my $rows_count = $self->db->resultset($table)->search()->count();
+        if ( $row_last_updated gt $naive_db_state_label ) {
+            $naive_db_state_label = $row_last_updated;
+        }
+        push(
+            @db_state, {
+                "Table"          => $table,
+                "RowLastUpdated" => $row_last_updated,
+                "RowsCount"      => $rows_count
+            }
+        );
+    }
+    $naive_db_state_label = substr($naive_db_state_label, 0, index($naive_db_state_label, '.'));
+    $naive_db_state_label =~ s/-//g;
+    $naive_db_state_label =~ s/://g;
+    $naive_db_state_label =~ s/ /-/;
+
+
+    my @config_state = ();
+    push(@config_state, {
+            "FormatVersion" => 1,
+            "QueueUpdate"   => {
+                "Label" => $queue_update_label_string,
+                "Info"  => {
+                    "Prefix" => $queue_update_label_prefix,
+                    "Time"   => $queue_update_time
+                }
+            },
+            "DbState"       => {
+                "Label" => $naive_db_state_label,
+                "Info"       => \@db_state
+
+            }
+        }
+    );
+    ###END COPY FROM ConfigState
+
+
     $data_obj->{'stats'}->{'CDN_name'}   = $cdn_name;
     $data_obj->{'stats'}->{'time_label'} = $time_label;
+    $data_obj->{'stats'}->{'config_state'} = \@config_state;
     $data_obj->{'stats'}->{'date'}       = time();
     $data_obj->{'stats'}->{'tm_version'} = &tm_version();
     $data_obj->{'stats'}->{'tm_path'}    = $self->req->url->path->{'path'};
