@@ -248,10 +248,10 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     {
       from: "origins.algorithm",
       to: "origins.algorithm",
-      default: "RR",
+      default: "ROUNDROBIN",
       schema: {
         type: "string",
-        enum: ["RR", "WRR", "HASH"],
+        enum: ["ROUNDROBIN", "WRR", "HASH"],
       },
     },
     {
