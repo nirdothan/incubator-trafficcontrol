@@ -52,7 +52,9 @@ var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverC
     configStateService.getConfigState()
       .then(function(result) {
         $scope.configStateLabel = result[0].DbState.Label + result[0].QueueUpdate.Label;
-      });
+      }).catch(function() {
+      $scope.configStateLabel = "N/A";
+		  });
   };
 
 	var createIntervals = function() {
