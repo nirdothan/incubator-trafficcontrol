@@ -1680,7 +1680,8 @@ span.right {
   padding: 0 10px 0 20px;
   text-overflow: ellipsis;
   overflow: hidden;
-  position: relative
+  position: relative;
+  white-space: nowrap;
 }
 @media (min-width: 992px) {
   footer {

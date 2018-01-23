@@ -51,9 +51,11 @@ var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverC
   var getConfigState = function() {
     configStateService.getConfigState()
       .then(function(result) {
-        $scope.configStateLabel = result[0].DbState.Label + result[0].QueueUpdate.Label;
+        $scope.configQueueUpdateLabel = result[0].QueueUpdate.Label;
+        $scope.configDbStateLabel = result[0].DbState.Label;
       }).catch(function() {
-      $scope.configStateLabel = "N/A";
+        $scope.configDbStateLabel = "N/A";
+        $scope.configQueueUpdateLabel = "N/A";
 		  });
   };
 
