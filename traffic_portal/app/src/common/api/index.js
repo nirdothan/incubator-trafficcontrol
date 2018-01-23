@@ -42,5 +42,6 @@ module.exports = angular.module('trafficPortal.api', [])
     .service('tenantService', require('./TenantService'))
     .service('typeService', require('./TypeService'))
     .service('trafficPortalService', require('./TrafficPortalService'))
-    .service('userService', require('./UserService'))
+	  .service('userService', require('./UserService'))
+    .service('configStateService', require('./ConfigStateService'))
 ;

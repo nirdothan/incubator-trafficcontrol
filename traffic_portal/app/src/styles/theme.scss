@@ -1680,7 +1680,6 @@ span.right {
   padding: 0 10px 0 20px;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
   position: relative
 }
 @media (min-width: 992px) {
@@ -1705,8 +1704,12 @@ span.right {
 }
 .tile_count .tile_stats_count .count {
   font-size: 25px;
-  line-height: 47px;
-  font-weight: 600
+  margin-top: 10px;
+  font-weight: 600;
+
+  &.config_state {
+    font-size: 16px;
+  }
 }
 .tile_count .tile_stats_count span {
   font-size: 12px

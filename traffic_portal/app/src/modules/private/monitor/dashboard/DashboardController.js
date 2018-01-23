@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverCount, $scope, $interval, cacheGroupService, cdnService, serverService, propertiesModel) {
+var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverCount, $scope, $interval, cacheGroupService, cdnService, serverService, propertiesModel, configStateService) {
 
 	var cacheGroupHealthInterval,
 		currentStatsInterval,
@@ -47,6 +47,13 @@ var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverC
 				$scope.serverCount = result;
 			});
 	};
+
+  var getConfigState = function() {
+    configStateService.getConfigState()
+      .then(function(result) {
+        $scope.configStateLabel = result[0].DbState.Label + result[0].QueueUpdate.Label;
+      });
+  };
 
 	var createIntervals = function() {
 		killIntervals();
@@ -86,6 +93,8 @@ var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverC
 	});
 
 	var init = function () {
+    getConfigState();
+
 		if (autoRefresh) {
 			createIntervals();
 		}
@@ -94,5 +103,5 @@ var DashboardController = function(cacheGroupHealth, cdns, currentStats, serverC
 
 };
 
-DashboardController.$inject = ['cacheGroupHealth', 'cdns', 'currentStats', 'serverCount', '$scope', '$interval', 'cacheGroupService', 'cdnService', 'serverService', 'propertiesModel'];
+DashboardController.$inject = ['cacheGroupHealth', 'cdns', 'currentStats', 'serverCount', '$scope', '$interval', 'cacheGroupService', 'cdnService', 'serverService', 'propertiesModel', 'configStateService'];
 module.exports = DashboardController;

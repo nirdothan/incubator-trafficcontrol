@@ -30,7 +30,7 @@ under the License.
             </div>
         </div>
         <div class="col-md-8 col-sm-6 col-xs-12">
-            <div class="col-md-4 col-sm-12 col-xs-12 tile_stats_count">
+            <div class="col-md-3 col-sm-12 col-xs-12 tile_stats_count">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <span class="count_top">Healthy Caches</span>
                     <div class="count green">{{cacheGroupHealth.totalOnline | number:0}}</div>
@@ -40,7 +40,7 @@ under the License.
                     <div class="count red">{{cacheGroupHealth.totalOffline | number:0}}</div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-12 col-xs-12 tile_stats_count">
+            <div class="col-lg-3 col-sm-12 col-xs-12 tile_stats_count">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <span class="count_top">Online Caches</span>
                     <div class="count">{{serverCount.ONLINE | number:0}}</div>
@@ -50,7 +50,7 @@ under the License.
                     <div class="count">{{serverCount.REPORTED | number:0}}</div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-12 col-xs-12 tile_stats_count">
+            <div class="col-lg-3 col-sm-12 col-xs-12 tile_stats_count">
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <span class="count_top">Offline Caches</span>
                     <div class="count">{{serverCount.OFFLINE | number:0}}</div>
@@ -58,6 +58,12 @@ under the License.
                 <div class="col-md-6 col-sm-6 col-xs-6">
                     <span class="count_top">Admin Down Caches</span>
                     <div class="count">{{serverCount.ADMIN_DOWN | number:0}}</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-12 col-xs-12 tile_stats_count">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <span class="count_top">Config state</span>
+                    <div class="count config_state">{{configStateLabel}}</div>
                 </div>
             </div>
         </div>
