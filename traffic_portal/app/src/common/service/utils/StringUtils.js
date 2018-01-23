@@ -18,11 +18,38 @@
  */
 
 var FormUtils = function() {
+  this.labelize = function(string) {
+    return string.replace(/([A-Z])/g, " $1").replace(/^./, function(str) {
+      return str.toUpperCase();
+    });
+  };
 
-    this.labelize = function(string) {
-        return string.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); });
-    };
+  this.extractJsonFromRemapText = function(remapText) {
+    var regex = /^(.*?)#\s*?config=(.+$)$/;
+    var original = "";
+    var data = {};
 
+    try {
+      if (remapText) {
+        var match = remapText.match(regex);
+        if (match) {
+          original = match[1];
+          data = JSON.parse(match[2]);
+        } else {
+          original = remapText;
+        }
+      }
+    } catch (e) {
+      original = remapText;
+      console.error("exception during remap parsing:", e);
+    }
+
+    return [original, data];
+  };
+
+  this.combineToRemapText = function(remapTextReal, jsonData) {
+      return remapTextReal + "# config=" + JSON.stringify(jsonData)
+  }
 };
 
 FormUtils.$inject = [];
