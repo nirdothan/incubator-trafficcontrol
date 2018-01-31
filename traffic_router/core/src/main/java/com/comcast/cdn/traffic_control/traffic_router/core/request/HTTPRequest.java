@@ -30,6 +30,7 @@ public class HTTPRequest extends Request {
     public static final String FAKE_IP = "fakeClientIpAddress";
 
     private String requestedUrl;
+    private String scheme;
     private String path;
     private String uri;
     private String queryString;
@@ -56,6 +57,7 @@ public class HTTPRequest extends Request {
 
     public void applyRequest(final HttpServletRequest request) {
         setClientIP(request.getRemoteAddr());
+        setScheme(request.getScheme());
         setPath(request.getPathInfo());
         setQueryString(request.getQueryString());
         setHostname(request.getServerName());
@@ -111,6 +113,10 @@ public class HTTPRequest extends Request {
         return headers;
     }
 
+    public String getScheme() {
+        return scheme;
+    }
+
     public String getPath() {
         return path;
     }
@@ -142,6 +148,10 @@ public class HTTPRequest extends Request {
 
     public void setHeaders(final Map<String, String> headers) {
         this.headers = headers;
+    }
+
+    public void setScheme(final String scheme) {
+        this.scheme = scheme;
     }
 
     public void setPath(final String path) {

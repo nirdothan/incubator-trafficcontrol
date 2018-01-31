@@ -436,6 +436,7 @@ sub check_deliveryservice_input {
 			->is_equal( "", $org_host_name . " is not a valid org server name (rfc1123) or " . $port . " is not a valid port" );
 	}
 	if ( $self->param('ds.http_bypass_fqdn') ne ""
+		&& $self->param('ds.http_bypass_fqdn') ne "$U"
 		&& !&is_hostname( $self->param('ds.http_bypass_fqdn') ) )
 	{
 		$self->field('ds.http_bypass_fqdn')

@@ -225,6 +225,18 @@ public class DeliveryService {
 			track.setResultDetails(ResultDetails.DS_NO_BYPASS);
 			return null;
 		}
+
+		final String openCachingMarker = "$U";
+		if (fqdn.equals(openCachingMarker)){
+			// supporting the usecase of open caching, where the fqdn is the first item in the path
+			final StringBuilder url = new StringBuilder(request.getScheme());
+			url.append(":/");
+			url.append(request.getUri());
+			if (request.getQueryString() != null && appendQueryString()) {
+				url.append('?').append(request.getQueryString());
+			}
+			return new URL(url.toString());
+		}
 		int port = request.isSecure() ? 443 : 80;
 		if(httpJo.has("port")) {
 			port = httpJo.optInt("port");
