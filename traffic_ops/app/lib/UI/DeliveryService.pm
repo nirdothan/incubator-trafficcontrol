@@ -790,6 +790,15 @@ sub update {
 #		print $f . " => " . $self->param($f) . "\n";
 #	}
 
+	my $ds = $self->db->resultset('Deliveryservice')->find( { id => $id } );
+	my $new_cdn_id = $self->paramAsScalar('ds.cdn_id');
+	if ( $new_cdn_id ne $ds->cdn_id ) {
+		my $err = "A deliveryservice cdnId is immutable.";
+		$self->flash( message => $err );
+		my $referer = $self->req->headers->header('referer');
+		return $self->redirect_to($referer);
+	}
+
 	if ( $self->check_deliveryservice_input( $self->param('ds.cdn_id'), $id ) ) {
 
 		#print "global_max_mbps = " . $self->param('ds.global_max_mbps') . "\n";
