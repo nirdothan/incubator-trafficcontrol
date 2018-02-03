@@ -300,8 +300,13 @@ sub update {
     if ( $new_xml_id ne $ds->xml_id ) {
         return $self->alert( "A deliveryservice xmlId is immutable." );
     }
-	
-	#setting tenant_id to undef if tenant is not set. 
+
+	my $new_cdn_id = $params->{cdnId};
+	if ( $new_cdn_id ne $ds->cdn_id ) {
+		return $self->alert( "A deliveryservice cdnId is immutable." );
+	}
+
+	#setting tenant_id to undef if tenant is not set.
 	my $tenant_id = exists($params->{tenantId}) ? $params->{tenantId} :  undef;
 	if ($tenant_utils->use_tenancy() and !defined($tenant_id) and defined($ds->tenant_id)) {
 		return $self->alert("Invalid tenant. Cannot clear the delivery-service tenancy.");
