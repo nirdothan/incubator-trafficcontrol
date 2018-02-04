@@ -553,6 +553,8 @@ sub api_routes {
 		->to( 'SslKeys#view_by_xml_id', namespace => 'API::DeliveryService' );
 	$r->get("/api/$version/deliveryservices/hostname/#hostname/sslkeys")->over( authenticated => 1, not_ldap => 1 )
 		->to( 'SslKeys#view_by_hostname', namespace => 'API::DeliveryService' );
+	$r->get("/api/$version/deliveryservices/sslkeys/dump")->over( authenticated => 1, not_ldap => 1 )
+		->to( 'SslKeys#dump_view', namespace => 'API::DeliveryService' );
 
 	# generate new ssl keys for a delivery service
 	$r->post("/api/$version/deliveryservices/sslkeys/generate")->over( authenticated => 1, not_ldap => 1 )->to( 'SslKeys#generate', namespace => 'API::DeliveryService' );
@@ -571,6 +573,8 @@ sub api_routes {
 		->to( 'KeysUrlSig#copy_url_sig_keys', namespace => 'API::DeliveryService' );
 	$r->get("/api/$version/deliveryservices/xmlId/:xmlId/urlkeys")->over( authenticated => 1, not_ldap => 1 )
 		->to( 'KeysUrlSig#view_by_xmlid', namespace => 'API::DeliveryService' );
+	$r->get("/api/$version/deliveryservices/urlkeys/dump")->over( authenticated => 1, not_ldap => 1 )
+		->to( 'KeysUrlSig#dump_view', namespace => 'API::DeliveryService' );
 
 	# -- DELIVERY SERVICE: REGEXES
 	$r->get("/api/$version/deliveryservices_regexes")->over( authenticated => 1, not_ldap => 1 )->to( 'DeliveryServiceRegexes#all', namespace => $namespace );

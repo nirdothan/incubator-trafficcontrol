@@ -132,6 +132,22 @@ sub generate {
 	}
 }
 
+sub dump_view {
+	my $self = shift;
+	if ( !&is_admin($self) ) {
+		return $self->alert( { Error => " - You must be an ADMIN to perform this operation!" } );
+	}
+
+	my $response_container = $self->riak_search( "sslkeys");
+	my $response = $response_container->{'response'};
+	if ( $response->is_success() ) {
+		my $content = decode_json( $response->content )->{response}->{docs};
+		return $self->success($content);
+	}
+
+	return $self->alert( { Error => " - Could not retrieve SSL records !  Response was: " . $response->content } );
+}
+
 sub view_by_xml_id {
 	my $self    = shift;
 	my $xml_id     = $self->param('xmlid');
