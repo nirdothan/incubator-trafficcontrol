@@ -588,6 +588,11 @@ sub api_routes {
 	$r->get("/api/$version/deliveryserviceserver")->over( authenticated => 1, not_ldap => 1 )->to( 'DeliveryServiceServer#index', namespace => $namespace );
 	$r->post("/api/$version/deliveryserviceserver")->over( authenticated => 1, not_ldap => 1 )->to( 'DeliveryServiceServer#assign_servers_to_ds', namespace => $namespace );
 
+    # -- DELIVERYSERVICES: MSP TEMPLATES
+    $r->get("/api/$version/msp-templates/dump")->over( authenticated => 1, not_ldap => 1 )->to( 'MspTemplate#dump', namespace => 'API::DeliveryService' );
+
+
+
 	# -- DIVISIONS
 	$r->get("/api/$version/divisions")->over( authenticated => 1, not_ldap => 1 )->to( 'Division#index', namespace => $namespace );
 	$r->get( "/api/$version/divisions/:id" => [ id => qr/\d+/ ] )->over( authenticated => 1, not_ldap => 1 )->to( 'Division#show', namespace => $namespace );
