@@ -310,6 +310,11 @@ sub update {
 		return $self->alert("Invalid tenant. This tenant is not available to you for assignment.");
 	}
 
+	if ( $params->{geoLimitRedirectURL} and index($params->{geoLimitRedirectURL}, '://')==-1 ) {
+		return $self->alert( "A geo limit redirect url must include the scheme." );
+	}
+
+
 	my $values = {
 		active                 => $params->{active},
 		cacheurl               => $params->{cacheurl},
@@ -618,6 +623,10 @@ sub create {
 	my $existing = $self->db->resultset('Deliveryservice')->find( { xml_id => $xml_id } );
 	if ($existing) {
 		return $self->alert( "A deliveryservice with xmlId " . $xml_id . " already exists." );
+	}
+
+	if ( $params->{geoLimitRedirectURL} and index($params->{geoLimitRedirectURL}, '://')==-1 ) {
+		return $self->alert( "A geo limit redirect url must include the scheme." );
 	}
 
 	my $values = {

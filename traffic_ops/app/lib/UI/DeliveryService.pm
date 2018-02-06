@@ -507,6 +507,10 @@ sub check_deliveryservice_input {
 		if ( ( not $url =~ /^[0-9a-zA-Z_\!\~\*\'\(\)\.\;\?\:\@\&\=\+\$\,\%\#\-\/]+$/ ) || $url =~ /\/\// ) {
 			$self->field('ds.geolimit_redirect_url')->is_equal( "", "Invalid geolimit redirect url" );
 		}
+		if ( $self->param('ds.geolimit_redirect_url') and index($self->param('ds.geolimit_redirect_url'), '://')==-1 ) {
+			$self->field('ds.geolimit_redirect_url')->is_equal( "", "A geo limit redirect url must include the scheme." );
+		}
+
 	}
 
 	my @valid_country_codes_list =
