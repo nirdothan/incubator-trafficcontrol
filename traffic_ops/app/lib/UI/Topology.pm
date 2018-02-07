@@ -323,7 +323,7 @@ sub gen_crconfig_json {
             $data_obj->{'contentServers'}->{ $row->host_name }->{'ip6'}           = ( $row->ip6_address || "" );
             $data_obj->{'contentServers'}->{ $row->host_name }->{'profile'}       = $row->profile->name;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'type'}          = $row->type->name;
-            $data_obj->{'contentServers'}->{ $row->host_name }->{'hashId'}        = $row->xmpp_id;
+            $data_obj->{'contentServers'}->{ $row->host_name }->{'hashId'}        = $row->xmpp_id ? $row->xmpp_id : $row->host_name;
             $data_obj->{'contentServers'}->{ $row->host_name }->{'hashCount'}     = int( $weight * $weight_multiplier );
         }
     }
