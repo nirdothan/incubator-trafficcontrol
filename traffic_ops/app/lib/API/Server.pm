@@ -1221,7 +1221,7 @@ sub is_server_valid {
 
 	my $rules = {
 		fields => [
-			qw/cachegroupId cdnId domainName hostName httpsPort iloIpAddress iloIpNetmask iloIpGateway iloUsername iloPassword interfaceMtu interfaceName ip6Address ip6Gateway ipAddress ipNetmask ipGateway mgmtIpAddress mgmtIpNetmask mgmtIpGateway offlineReason physLocationId profileId rack routerHostName routerPortName statusId tcpPort typeId updPending/
+			qw/cachegroupId cdnId domainName hostName tcpPort httpsPort iloIpAddress iloIpNetmask iloIpGateway iloUsername iloPassword interfaceMtu interfaceName ip6Address ip6Gateway ipAddress ipNetmask ipGateway mgmtIpAddress mgmtIpNetmask mgmtIpGateway offlineReason physLocationId profileId rack routerHostName routerPortName statusId tcpPort typeId updPending/
 		],
 
 		# Validation checks to perform
@@ -1229,6 +1229,7 @@ sub is_server_valid {
 			cachegroupId   => [ is_required("is required") ],
 			cdnId          => [ is_required("is required") ],
 			domainName     => [ is_required("is required") ],
+			httpsPort      => [ is_required("is required") ],
 			hostName       => [ is_required("is required") ],
 			interfaceMtu   => [ is_required("is required") ],
 			interfaceName  => [ is_required("is required") ],
@@ -1238,6 +1239,7 @@ sub is_server_valid {
 			physLocationId => [ is_required("is required") ],
 			profileId      => [ is_required("is required") ],
 			statusId       => [ is_required("is required") ],
+			tcpPort        => [ is_required("is required") ],
 			typeId         => [ is_required("is required") ],
 			updPending     => [ is_required("is required") ]
 		]
