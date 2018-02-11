@@ -206,6 +206,7 @@ public class DeliveryService {
 		return coverageZoneOnly;
 	}
 
+	@SuppressWarnings("PMD.NPathComplexity")
 	public URL getFailureHttpResponse(final HTTPRequest request, final Track track) throws MalformedURLException {
 		if(bypassDestination == null) {
 			track.setResult(ResultType.MISS);
