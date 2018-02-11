@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var FormEditDeliveryServiceController = function(deliveryService, type, types, $scope, $controller, $uibModal, $anchorScroll, locationUtils, deliveryServiceService) {
+var FormEditDeliveryServiceController = function(deliveryService, type, types, $scope, $controller, $uibModal, $anchorScroll, locationUtils, deliveryServiceService, stringUtils) {
 
 	// extends the FormDeliveryServiceController to inherit common methods
 	angular.extend(this, $controller('FormDeliveryServiceController', { deliveryService: deliveryService, type: type, types: types, $scope: $scope }));
@@ -30,13 +30,20 @@ var FormEditDeliveryServiceController = function(deliveryService, type, types, $
 	};
 
 	$scope.deliveryServiceName = angular.copy(deliveryService.displayName);
+  var result = stringUtils.extractJsonFromRemapText(deliveryService.remapText);
+  $scope.remapTextReal = result[0];
+  $scope.remapTextJsonData = result[1];
+  $scope.hasAdditionalJson = !!($scope.remapTextJsonData && Object.keys($scope.remapTextJsonData).length > 0);
 
 	$scope.settings = {
 		isNew: false,
 		saveLabel: 'Update'
 	};
 
+
 	$scope.save = function(deliveryService) {
+    deliveryService.remapText = stringUtils.combineToRemapText($scope.remapTextReal, $scope.remapTextJsonData);
+
 		deliveryServiceService.updateDeliveryService(deliveryService).
 		then(function() {
 			$scope.deliveryServiceName = angular.copy(deliveryService.displayName);
@@ -68,5 +75,5 @@ var FormEditDeliveryServiceController = function(deliveryService, type, types, $
 
 };
 
-FormEditDeliveryServiceController.$inject = ['deliveryService', 'type', 'types', '$scope', '$controller', '$uibModal', '$anchorScroll', 'locationUtils', 'deliveryServiceService'];
+FormEditDeliveryServiceController.$inject = ['deliveryService', 'type', 'types', '$scope', '$controller', '$uibModal', '$anchorScroll', 'locationUtils', 'deliveryServiceService', "stringUtils"];
 module.exports = FormEditDeliveryServiceController;

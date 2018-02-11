@@ -1,4 +1,12 @@
-var TableDeliveryServiceServersController = function(deliveryService, deliveryServiceService, $scope, messageModel) {
+var TableDeliveryServiceServersController = function(
+  deliveryService,
+  deliveryServiceService,
+  $scope,
+  messageModel,
+  stringUtils,
+  $http,
+  ENV
+) {
   var EASY_MODE = "easy";
   var FULL_MODE = "full";
 
@@ -7,38 +15,43 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     {
       from: "subitem[0].operation.subitemManipulation.minStepSizeForChunking",
       to: "subitem.minStepSizeForChunking",
-      default: 1,
-      schema: { type: "integer", minimum: 1 },
+      default: null,
+      discardIf: isNull,
+      schema: { oneOf: [{ type: "integer", minimum: 1 }, { type: "null" }] },
     },
     {
       from: "subitem[0].operation.subitemManipulation.maxSegmentSecViewTime",
       to: "subitem.maxSegmentSecViewTime",
-      default: 7,
+      default: null,
       discardIf: isNull,
       schema: { oneOf: [{ type: "integer", minimum: 1 }, { type: "null" }] },
     },
     {
       from: "subitem[0].operation.subitemManipulation.requiredChunkSecViewTime",
       to: "subitem.requiredChunkSecViewTime",
-      default: 3600,
-      schema: { type: "integer", minimum: 1 },
+      default: null,
+      discardIf: isNull,
+      schema: { oneOf: [{ type: "integer", minimum: 1 }, { type: "null" }] },
     },
     {
       from: "subitem[0].elements[0].priority",
       to: "subitem.priority",
-      default: 1,
-      schema: { type: "integer", minimum: 1 },
+      default: null,
+      discardIf: isNull,
+      schema: { oneOf: [{ type: "integer", minimum: 1 }, { type: "null" }] },
     },
     {
       from: "subitem[0].elements[0].match",
       to: "subitem.match",
-      default: "kMatchOnlyOne",
-      schema: { type: "string", enum: ["kMatchAll", "kMatchOnlyOne"] },
+      default: null,
+      discardIf: isNull,
+      schema: { oneOf: [{ type: "string", enum: ["kMatchAll", "kMatchOnlyOne"] }, { type: "null" }] },
     },
     {
       from: "subitem[0].elements[0].tokens",
       to: "subitem.tokens",
       default: [],
+      discardIf: isEmpty,
       transformFullToPartialFunc: tokenTransformFullToPartialFunc,
       transformPartialToFullFunc: tokenTransformPartialToFullFunc,
       schema: {
@@ -267,34 +280,6 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     },
   ];
 
-  function extractJsonFromRemapText(deliveryService) {
-    var regex = /^#\s*?config=(.+$)/;
-    var data = {};
-
-    if (!deliveryService) {
-      throw new Error("expected a deliveryService, got: " + deliveryService);
-    }
-
-    var remapText = deliveryService.remapText;
-    try {
-      if (remapText) {
-        var match = remapText.match(regex);
-        if (match) {
-          data = JSON.parse(match[1]);
-        }
-      }
-    } catch (e) {
-      _friendlyExceptionNotification(
-        e,
-        "Failed to find a valid JSON object in 'Raw remap text', assuming no existing JSON object. Found value: \"" +
-          remapText +
-          '"'
-      );
-    }
-
-    return data;
-  }
-
   function createSchemaFromMappings(mappings) {
     const schema = {
       title: "Validation schema",
@@ -322,9 +307,13 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
   }
 
   function tokenTransformFullToPartialFunc(tokens) {
-    return tokens.filter(function(token) {
-      return "pathSegment" in token;
-    });
+    if (tokens) {
+      return tokens.filter(function(token) {
+        return "pathSegment" in token;
+      });
+    } else {
+      return [];
+    }
   }
 
   function tokenTransformPartialToFullFunc(currentTokens, newTokens) {
@@ -419,7 +408,9 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
   }
 
   function _friendlyExceptionNotification(e, customMessage) {
-    console.error("Message: " + (customMessage || "None"));
+    if (customMessage) {
+      console.error("Message: " + customMessage);
+    }
     console.error(e);
 
     var friendlyMessage =
@@ -429,19 +420,6 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     }
 
     messageModel.setMessages([{ level: "error", text: friendlyMessage }], false);
-  }
-
-  var schema = createSchemaFromMappings(mappings);
-
-  try {
-    $scope.deliveryService = deliveryService;
-    $scope.originalFullData = extractJsonFromRemapText(deliveryService);
-    $scope.fullData = angular.copy($scope.originalFullData);
-    $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
-    $scope.selectedMode = EASY_MODE;
-    $scope.isUpdateInProgress = false;
-  } catch (e) {
-    _friendlyExceptionNotification(e);
   }
 
   $scope.onModeChange = function() {
@@ -458,7 +436,7 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
   $scope.onUpdate = function() {
     try {
       updateFullDataFromJsonEditor();
-      deliveryService.remapText = "# config=" + JSON.stringify($scope.fullData);
+      deliveryService.remapText = stringUtils.combineToRemapText($scope.originalBeforeData, $scope.fullData);
 
       $scope.isUpdateInProgress = true;
       deliveryServiceService
@@ -478,12 +456,23 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
 
   $scope.onRevert = function() {
     try {
+      $scope.selectedMode = FULL_MODE;
       $scope.fullData = $scope.originalFullData;
       updateJsonEditorFromFullData();
     } catch (e) {
       _friendlyExceptionNotification(e);
     }
   };
+
+  $scope.updateFromTemplate = function(template) {
+    try {
+      $scope.selectedMode = FULL_MODE;
+      $scope.fullData = template;
+      updateJsonEditorFromFullData();
+    } catch (e) {
+      _friendlyExceptionNotification(e);
+    }
+  }
 
   $scope.$watch(
     "jsonEdtiorConfig.json",
@@ -496,7 +485,46 @@ var TableDeliveryServiceServersController = function(deliveryService, deliverySe
     },
     true
   );
+
+  var schema = createSchemaFromMappings(mappings);
+
+  try {
+    $scope.deliveryService = deliveryService;
+
+    var result = stringUtils.extractJsonFromRemapText(deliveryService.remapText);
+    $scope.originalBeforeData = result[0];
+    $scope.originalFullData = result[1];
+
+    $scope.fullData = angular.copy($scope.originalFullData);
+    $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
+    $scope.selectedMode = EASY_MODE;
+    $scope.isUpdateInProgress = false;
+  } catch (e) {
+    _friendlyExceptionNotification(e);
+  }
+
+  $scope.templates = []
+  try {
+    $http
+      .get(ENV.api['root'] + 'msp-templates/dump')
+      .then(function(result) {
+        $scope.templates = result.data.response.templates;
+      })
+      .catch(function(e) {
+        _friendlyExceptionNotification("Failed to load templates");
+      });
+  } catch (e) {
+    _friendlyExceptionNotification("Failed to load templates");
+  }
 };
 
-TableDeliveryServiceServersController.$inject = ["deliveryService", "deliveryServiceService", "$scope", "messageModel"];
+TableDeliveryServiceServersController.$inject = [
+  "deliveryService",
+  "deliveryServiceService",
+  "$scope",
+  "messageModel",
+  "stringUtils",
+  "$http",
+  "ENV"
+];
 module.exports = TableDeliveryServiceServersController;

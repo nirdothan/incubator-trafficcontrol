@@ -30,7 +30,7 @@
     display: flex;
 
     div.editing-container {
-      flex: 1;
+      width: 50%;
       padding-right: 5px;
 
       div.editing-header {
@@ -51,7 +51,7 @@
     }
 
     div.preview-container {
-      flex: 1;
+      width: 50%;
       padding-left: 5px;
 
       .preview {

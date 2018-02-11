@@ -171,13 +171,13 @@ under the License.
                 </div>
             </div>
 
-            <div class="form-group" ng-class="{'has-error': hasError(deliveryServiceForm.geolimitRedirectUrl), 'has-feedback': hasError(deliveryServiceForm.geolimitRedirectUrl)}">
+            <div class="form-group" ng-class="{'has-error': hasError(deliveryServiceForm.geoLimitRedirectURL), 'has-feedback': hasError(deliveryServiceForm.geoLimitRedirectURL)}">
                 <label class="control-label col-md-2 col-sm-2 col-xs-12">Geo Limit Redirect URL</label>
                 <div class="col-md-10 col-sm-10 col-xs-12">
-                    <input id="geolimitRedirectUrl" name="geolimitRedirectUrl" type="text" class="form-control" ng-model="deliveryService.geolimitRedirectUrl" ng-maxlength="255" ng-pattern="/^(https?:\/\/)/" autofocus>
-                    <small class="input-error" ng-show="hasPropertyError(deliveryServiceForm.geolimitRedirectUrl, 'maxlength')">Too Long</small>
-                    <small class="input-error" ng-show="hasPropertyError(deliveryServiceForm.geolimitRedirectUrl, 'pattern')">Must start with http:// or https://</small>
-                    <span ng-show="hasError(deliveryServiceForm.geolimitRedirectUrl)" class="form-control-feedback"><i class="fa fa-times"></i></span>
+                    <input id="geoLimitRedirectURL" name="geoLimitRedirectURL" type="text" class="form-control" ng-model="deliveryService.geoLimitRedirectURL" ng-maxlength="255" ng-pattern="/^(https?:\/\/)/" autofocus>
+                    <small class="input-error" ng-show="hasPropertyError(deliveryServiceForm.geoLimitRedirectURL, 'maxlength')">Too Long</small>
+                    <small class="input-error" ng-show="hasPropertyError(deliveryServiceForm.geoLimitRedirectURL, 'pattern')">Must start with http:// or https://</small>
+                    <span ng-show="hasError(deliveryServiceForm.geoLimitRedirectURL)" class="form-control-feedback"><i class="fa fa-times"></i></span>
                 </div>
             </div>
 
@@ -357,12 +357,18 @@ under the License.
             <div class="form-group" ng-class="{'has-error': hasError(deliveryServiceForm.remapText), 'has-feedback': hasError(deliveryServiceForm.remapText)}">
                 <label class="control-label col-md-2 col-sm-2 col-xs-12">Raw remap text</label>
                 <div class="col-md-10 col-sm-10 col-xs-12">
-                    <input id="remapText" name="remapText" type="text" class="form-control" ng-model="deliveryService.remapText" ng-maxlength="2048" autofocus>
+                    <input id="remapText" name="remapText" type="text" class="form-control" ng-model="remapTextReal" ng-maxlength="2048" autofocus>
                     <small class="input-error" ng-show="hasPropertyError(deliveryServiceForm.remapText, 'maxlength')">Too Long</small>
                     <span ng-show="hasError(deliveryServiceForm.remapText)" class="form-control-feedback"><i class="fa fa-times"></i></span>
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-2 col-xs-12">Has additional JSON: </label>
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <input id="checkBox" type="checkbox" disabled ng-model="hasAdditionalJson">
+                </div>
+            </div>
             <div class="form-group" ng-class="{'has-error': hasError(deliveryServiceForm.longDesc), 'has-feedback': hasError(deliveryServiceForm.longDesc)}">
                 <label class="control-label col-md-2 col-sm-2 col-xs-12">Long Description</label>
                 <div class="col-md-10 col-sm-10 col-xs-12">
