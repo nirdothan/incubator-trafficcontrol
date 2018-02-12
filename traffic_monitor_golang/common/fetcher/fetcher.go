@@ -55,7 +55,7 @@ type Counters struct {
 }
 
 func (f HttpFetcher) Fetch(id string, url string, host string, pollId uint64, pollFinishedChan chan<- uint64) {
-	log.Debugf("poll %v %v fetch start\n", pollId, time.Now())
+	log.Debugf("poll %v %v fetch start. url: [%v]\n", pollId, time.Now(), url)
 	req, err := http.NewRequest("GET", url, nil)
 	// TODO: change this to use f.Headers. -jse
 	req.Header.Set("User-Agent", f.UserAgent)
