@@ -551,6 +551,92 @@ func addCacheStat(stat *dsdata.StatCacheStats, name string, val interface{}) err
 			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
 		}
 		stat.TpsTotal.Value += v
+
+	/* nird: new metrics */
+	case "method_get":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.MethodGet.Value += int64(v)
+	case "method_head":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.MethodHead.Value += int64(v)
+	case "method_post":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.MethodPost.Value += int64(v)
+	case "method_options":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.MethodOptions.Value += int64(v)
+	case "method_other":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.MethodOther.Value += int64(v)
+	case "status_other":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.StatusOther.Value += int64(v)
+	case	"upstream_status_2xx":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.UpstreamStatus2xx.Value += int64(v)
+	case	"upstream_status_3xx":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.UpstreamStatus3xx.Value += int64(v)
+	case	"upstream_status_4xx":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.UpstreamStatus4xx.Value += int64(v)
+	case	"upstream_status_5xx":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.UpstreamStatus5xx.Value += int64(v)
+	case "upstream_status_other":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.UpstreamStatusOther.Value += int64(v)
+	case "cache_hit":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.CacheHit.Value += int64(v)
+	case "cache_miss":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.CacheMiss.Value += int64(v)
+	case "cache_stale":
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("stat '%s' value expected int actual '%v' type %T", name, val, val)
+		}
+		stat.CacheStale.Value += int64(v)
 	case "status_unknown":
 		return dsdata.ErrNotProcessedStat
 	default:

@@ -199,6 +199,21 @@ type StatCacheStats struct {
 	Tps2xx      StatFloat  `json:"tps_2xx"`
 	ErrorString StatString `json:"error_string"`
 	TpsTotal    StatFloat  `json:"tps_total"`
+	/* nird: new */
+	MethodGet           StatInt `json:"method_get"`
+	MethodHead          StatInt `json:"method_head"`
+	MethodPost          StatInt `json:"method_post"`
+	MethodOptions       StatInt `json:"method_options"`
+	MethodOther         StatInt `json:"method_other"`
+	StatusOther         StatInt `json:"status_other"`
+	UpstreamStatus2xx   StatInt `json:"upstream_status_2xx"`
+	UpstreamStatus3xx   StatInt `json:"upstream_status_3xx"`
+	UpstreamStatus4xx   StatInt `json:"upstream_status_4xx"`
+	UpstreamStatus5xx   StatInt `json:"upstream_status_5xx"`
+	UpstreamStatusOther StatInt `json:"upstream_status_other"`
+	CacheHit            StatInt `json:"cache_hit"`
+	CacheMiss           StatInt `json:"cache_miss"`
+	CacheStale          StatInt `json:"cache_stale"`
 }
 
 // Sum adds the given cache stats to this cache stats. Numeric values are summed; strings are appended.
@@ -218,6 +233,21 @@ func (a StatCacheStats) Sum(b StatCacheStats) StatCacheStats {
 		Tps2xx:      StatFloat{Value: a.Tps2xx.Value + b.Tps2xx.Value},
 		ErrorString: StatString{Value: a.ErrorString.Value + b.ErrorString.Value},
 		TpsTotal:    StatFloat{Value: a.TpsTotal.Value + b.TpsTotal.Value},
+		/* nird: new */
+		MethodGet:           StatInt{Value: a.MethodGet.Value + b.MethodGet.Value},
+		MethodHead:          StatInt{Value: a.MethodHead.Value + b.MethodHead.Value},
+		MethodPost:          StatInt{Value: a.MethodPost.Value + b.MethodPost.Value},
+		MethodOptions:       StatInt{Value: a.MethodOptions.Value + b.MethodOptions.Value},
+		MethodOther:         StatInt{Value: a.MethodOther.Value + b.MethodOther.Value},
+		StatusOther:         StatInt{Value: a.StatusOther.Value + b.StatusOther.Value},
+		UpstreamStatus2xx:   StatInt{Value: a.UpstreamStatus2xx.Value + b.UpstreamStatus2xx.Value},
+		UpstreamStatus3xx:   StatInt{Value: a.UpstreamStatus3xx.Value + b.UpstreamStatus3xx.Value},
+		UpstreamStatus4xx:   StatInt{Value: a.UpstreamStatus4xx.Value + b.UpstreamStatus4xx.Value},
+		UpstreamStatus5xx:   StatInt{Value: a.UpstreamStatus5xx.Value + b.UpstreamStatus5xx.Value},
+		UpstreamStatusOther: StatInt{Value: a.UpstreamStatusOther.Value + b.UpstreamStatusOther.Value},
+		CacheHit:            StatInt{Value: a.CacheHit.Value + b.CacheHit.Value},
+		CacheMiss:           StatInt{Value: a.CacheMiss.Value + b.CacheMiss.Value},
+		CacheStale:          StatInt{Value: a.CacheStale.Value + b.CacheStale.Value},
 	}
 }
 
@@ -486,5 +516,21 @@ func addStatCacheStats(s *StatsOld, c StatCacheStats, deliveryService tc.Deliver
 	add("tps_2xx", fmt.Sprintf("%f", c.Tps2xx.Value))
 	add("error-string", c.ErrorString.Value)
 	add("tps_total", fmt.Sprintf("%f", c.TpsTotal.Value))
+
+	/* nird: new */
+	add("method_get", strconv.Itoa(int(c.MethodGet.Value)))
+	add("method_head", strconv.Itoa(int(c.MethodHead.Value)))
+	add("method_post", strconv.Itoa(int(c.MethodPost.Value)))
+	add("method_options", strconv.Itoa(int(c.MethodOptions.Value)))
+	add("method_other", strconv.Itoa(int(c.MethodOther.Value)))
+	add("status_other", strconv.Itoa(int(c.StatusOther.Value)))
+	add("upstream_status_2xx", strconv.Itoa(int(c.UpstreamStatus2xx.Value)))
+	add("upstream_status_3xx", strconv.Itoa(int(c.UpstreamStatus3xx.Value)))
+	add("upstream_status_4xx", strconv.Itoa(int(c.UpstreamStatus4xx.Value)))
+	add("upstream_status_5xx", strconv.Itoa(int(c.UpstreamStatus5xx.Value)))
+	add("upstream_status_other", strconv.Itoa(int(c.UpstreamStatusOther.Value)))
+	add("cacheHit", strconv.Itoa(int(c.CacheHit.Value)))
+	add("cache_stale", strconv.Itoa(int(c.CacheStale.Value)))
+
 	return s
 }
