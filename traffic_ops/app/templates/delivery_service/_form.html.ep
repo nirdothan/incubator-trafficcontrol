@@ -499,6 +499,17 @@
 				%= field('ds.cacheurl')->text(class => 'field', readonly => 'cacheurl');
 			<% }  %>
 	</div>
+	<div class="block form-row" id="cache_selection_path_capture_row">
+		<% unless (field('ds.cache_selection_path_capture')->valid) { %>
+			<span class="field-with-error"><%= field('ds.cache_selection_path_capture')->error %></span>
+		<% } %>
+		%= label_for 'cache_selection_path_capture' => 'Cache selection path capture', class => 'label'
+			<% if ($priv_level >= 20) { %>
+				%= field('ds.cache_selection_path_capture')->text(class => 'field', id => 'ds.cache_selection_path_capture', name => 'ds.cache_selection_path_capture');
+			<% } else { %>
+				%= field('ds.cache_selection_path_capture')->text(class => 'field', readonly => 'cache_selection_path_capture');
+			<% }  %>
+	</div>
 	<div class="block form-row" id="remap_text_row">
 		<% unless (field('ds.remap_text')->valid) { %>
 			<span class="field-with-error"><%= field('ds.remap_text')->error %></span>
