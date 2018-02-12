@@ -436,7 +436,10 @@ var TableDeliveryServiceServersController = function(
   $scope.onUpdate = function() {
     try {
       updateFullDataFromJsonEditor();
-      var dataWithName = { sourceSignature: $scope.fullData.siteName || "", signature: $scope.fullData };
+      var dataWithName = { signature: $scope.fullData };
+      if ($scope.fullData.remoteClassificationFallbackSignature) {
+        dataWithName.sourceSignature = $scope.fullData.remoteClassificationFallbackSignature;
+      }
       deliveryService.remapText = stringUtils.combineToRemapText($scope.originalBeforeData, dataWithName);
 
       $scope.isUpdateInProgress = true;
