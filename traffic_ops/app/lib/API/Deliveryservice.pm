@@ -92,6 +92,7 @@ sub index {
 		push(
 			@data, {
 				"active"               => \$row->active,
+				"cacheSelectionPathCapture" => $row->cache_selection_path_capture,
 				"cacheurl"             => $row->cacheurl,
 				"ccrDnsTtl"            => $row->ccr_dns_ttl,
 				"cdnId"                => $row->cdn->id,
@@ -210,6 +211,7 @@ sub show {
 		push(
 			@data, {
 				"active"               => \$row->active,
+				"cacheSelectionPathCapture" => $row->cache_selection_path_capture,
 				"cacheurl"             => $row->cacheurl,
 				"ccrDnsTtl"            => $row->ccr_dns_ttl,
 				"cdnId"                => $row->cdn->id,
@@ -312,6 +314,7 @@ sub update {
 
 	my $values = {
 		active                 => $params->{active},
+		cache_selection_path_capture => $params->{cacheSelectionPathCapture},
 		cacheurl               => $params->{cacheurl},
 		ccr_dns_ttl            => $params->{ccrDnsTtl},
 		cdn_id                 => $params->{cdnId},
@@ -392,6 +395,7 @@ sub update {
 		push(
 			@response, {
 				"active"                   => $rs->active,
+				"cacheSelectionPathCapture"  => $rs->cache_selection_path_capture,
 				"cacheurl"                 => $rs->cacheurl,
 				"ccrDnsTtl"                => $rs->ccr_dns_ttl,
 				"cdnId"                    => $rs->cdn->id,
@@ -570,7 +574,6 @@ sub safe_update {
 			);
 
 			&log( $self, " Safe update applied to deliveryservice [ '" . $rs->xml_id . "' ] with id: " . $rs->id, "APICHANGE" );
-
 			return $self->success( \@response, "Deliveryservice safe update was successful." );
 		}
 		else {
@@ -622,6 +625,7 @@ sub create {
 
 	my $values = {
 		active                 => $params->{active},
+		cache_selection_path_capture => $params->{cacheSelectionPathCapture},
 		cacheurl               => $params->{cacheurl},
 		ccr_dns_ttl            => $params->{ccrDnsTtl},
 		cdn_id                 => $params->{cdnId},
@@ -715,6 +719,7 @@ sub create {
 		push(
 			@response, {
 				"active"                   => $insert->active,
+				"cacheSelectionPathCapture"  => $insert->cache_selection_path_capture,
 				"cacheurl"                 => $insert->cacheurl,
 				"ccrDnsTtl"                => $insert->ccr_dns_ttl,
 				"cdnId"                    => $insert->cdn->id,
@@ -905,6 +910,7 @@ sub get_deliveryservices_by_serverId {
 			push(
 				@data, {
 					"active"               => \$row->active,
+					"cacheSelectionPathCapture" => $row->cache_selection_path_capture,
 					"cacheurl"             => $row->cacheurl,
 					"ccrDnsTtl"            => $row->ccr_dns_ttl,
 					"cdnId"                => $row->cdn->id,
@@ -1001,6 +1007,7 @@ sub get_deliveryservices_by_userId {
 			push(
 				@data, {
 					"active"               => \$row->active,
+					"cacheSelectionPathCapture" => $row->cache_selection_path_capture,
 					"cacheurl"             => $row->cacheurl,
 					"ccrDnsTtl"            => $row->ccr_dns_ttl,
 					"cdnId"                => $row->cdn->id,
@@ -1310,7 +1317,11 @@ sub is_deliveryservice_valid {
 
 	my $rules = {
 		fields => [
+<<<<<<< HEAD
 			qw/active cacheurl ccrDnsTtl cdnId checkPath displayName dnsBypassCname dnsBypassIp dnsBypassIp6 dnsBypassTtl dscp edgeHeaderRewrite geoLimitRedirectURL geoLimit geoLimitCountries geoProvider globalMaxMbps globalMaxTps httpBypassFqdn infoUrl initialDispersion ipv6RoutingEnabled logsEnabled longDesc longDesc1 longDesc2 maxDnsAnswers midHeaderRewrite missLat missLong multiSiteOrigin multiSiteOriginAlgorithm orgServerFqdn originShield profileId protocol qstringIgnore rangeRequestHandling regexRemap regionalGeoBlocking remapText signed sslKeyVersion tenantId trRequestHeaders trResponseHeaders typeId xmlId/
+=======
+			qw/active cacheSelectionPathCapture cacheurl ccrDnsTtl cdnId checkPath deepCachingType displayName dnsBypassCname dnsBypassIp dnsBypassIp6 dnsBypassTtl dscp edgeHeaderRewrite geoLimitRedirectURL geoLimit geoLimitCountries geoProvider globalMaxMbps globalMaxTps httpBypassFqdn infoUrl initialDispersion ipv6RoutingEnabled logsEnabled longDesc longDesc1 longDesc2 maxDnsAnswers midHeaderRewrite missLat missLong multiSiteOrigin multiSiteOriginAlgorithm orgServerFqdn originShield profileId protocol qstringIgnore rangeRequestHandling regexRemap regionalGeoBlocking remapText routingName signed signingAlgorithm sslKeyVersion tenantId trRequestHeaders trResponseHeaders typeId xmlId/
+>>>>>>> 4c05b69... cache-selection-path-capture API
 		],
 
 		# Validation checks to perform
