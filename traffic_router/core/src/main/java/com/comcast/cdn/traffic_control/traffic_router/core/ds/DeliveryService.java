@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,7 +93,9 @@ public class DeliveryService {
 	private final boolean acceptHttp;
 	private final boolean acceptHttps;
 	private final boolean redirectToHttps;
+	private Pattern cacheSelectionPathCaptureP;
 
+	@JsonIgnore
 	public DeliveryService(final String id, final JSONObject dsJo) throws JSONException {
 		this.id = id;
 		this.props = dsJo;
@@ -110,6 +114,10 @@ public class DeliveryService {
 		this.geoRedirectFile = this.geoRedirectUrl;
 		this.staticDnsEntries = dsJo.optJSONArray("staticDnsEntries");
 		this.bypassDestination = dsJo.optJSONObject("bypassDestination");
+		final String cacheSelectionPathCapture = JsonUtils.optString(dsJo, "cacheSelectionPathCapture", null);
+		if (cacheSelectionPathCapture != null && cacheSelectionPathCapture.equals("")){
+			this.cacheSelectionPathCaptureP = Pattern.compile(cacheSelectionPathCapture);
+		}
 		this.domains = dsJo.optJSONArray("domains");
 		this.soa = dsJo.optJSONObject("soa");
 		if(dsJo.has("appendQueryString")) {
@@ -368,6 +376,27 @@ public class DeliveryService {
 		}
 
 		return redirectInetRecords;
+	}
+
+	public String getCacheSelectionHash(final HTTPRequest request) {
+		if(cacheSelectionPathCaptureP == null) {
+			//std behavior
+			return request.getPath();
+		}
+		final Matcher m = cacheSelectionPathCaptureP.matcher(request.getPath());
+		if (!m.matches()){
+			//no match, using full path
+			return request.getPath();
+		}
+
+		final StringBuilder pathCapture = new StringBuilder("");
+		int i=0;
+		while (m.group(i) != null) {
+			pathCapture.append(m.group(i));
+			pathCapture.append("/?/");//delemeter between the different found elements
+			i++;
+		}
+		return pathCapture.toString();
 	}
 
 	@JsonIgnore

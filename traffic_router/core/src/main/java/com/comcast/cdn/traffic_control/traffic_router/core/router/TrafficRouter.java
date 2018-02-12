@@ -467,7 +467,8 @@ public class TrafficRouter {
 				routeResult.addDeliveryService(deliveryService);
 
 				if (caches != null && !caches.isEmpty()) {
-					final Cache cache = consistentHasher.selectHashable(caches, deliveryService.getDispersion(), request.getPath());
+					final Cache cache = consistentHasher.selectHashable(caches, deliveryService.getDispersion(),
+							deliveryService.getCacheSelectionHash(request));
 					routeResult.addUrl(new URL(deliveryService.createURIString(request, cache)));
 				}
 			}
@@ -520,7 +521,8 @@ public class TrafficRouter {
 			return routeResult;
 		}
 
-		final Cache cache = consistentHasher.selectHashable(caches, deliveryService.getDispersion(), request.getPath());
+		final Cache cache = consistentHasher.selectHashable(caches, deliveryService.getDispersion(),
+				deliveryService.getCacheSelectionHash(request));
 
 		if (deliveryService.isRegionalGeoEnabled()) {
 			RegionalGeo.enforce(this, request, deliveryService, cache, routeResult, track);
