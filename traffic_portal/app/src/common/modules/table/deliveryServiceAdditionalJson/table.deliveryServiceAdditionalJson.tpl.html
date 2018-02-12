@@ -31,7 +31,7 @@ under the License.
                     Revert to template&nbsp<span class="caret"></span>
                 </button>
                 <ul ng-if="templates.length" class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem" ng-repeat="template in templates"><a ng-click="updateFromTemplate(template)">{{template.remoteClassificationFallbackSignature}}</a></li>
+                    <li role="menuitem" ng-repeat="template in templates"><a ng-click="updateFromTemplate(template)">{{template.siteName}}</a></li>
                 </ul>
             </div>
             <button type="button" class="btn btn-primary" ng-click="onUpdate()" ng-disabled="isUpdateInProgress">Update</button>
