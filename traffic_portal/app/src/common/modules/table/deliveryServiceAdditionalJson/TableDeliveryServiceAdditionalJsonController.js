@@ -436,7 +436,11 @@ var TableDeliveryServiceServersController = function(
   $scope.onUpdate = function() {
     try {
       updateFullDataFromJsonEditor();
-      deliveryService.remapText = stringUtils.combineToRemapText($scope.originalBeforeData, $scope.fullData);
+      var dataWithName = { signature: $scope.fullData };
+      if ($scope.fullData.siteName) {
+        dataWithName.sourceSignature = $scope.fullData.siteName;
+      }
+      deliveryService.remapText = stringUtils.combineToRemapText($scope.originalBeforeData, dataWithName);
 
       $scope.isUpdateInProgress = true;
       deliveryServiceService
@@ -472,7 +476,7 @@ var TableDeliveryServiceServersController = function(
     } catch (e) {
       _friendlyExceptionNotification(e);
     }
-  }
+  };
 
   $scope.$watch(
     "jsonEdtiorConfig.json",
@@ -493,7 +497,7 @@ var TableDeliveryServiceServersController = function(
 
     var result = stringUtils.extractJsonFromRemapText(deliveryService.remapText);
     $scope.originalBeforeData = result[0];
-    $scope.originalFullData = result[1];
+    $scope.originalFullData = result[1].signature || {};
 
     $scope.fullData = angular.copy($scope.originalFullData);
     $scope.jsonEdtiorConfig = getJsonEditorEasyDataConfig($scope.fullData, mappings, schema);
@@ -503,10 +507,10 @@ var TableDeliveryServiceServersController = function(
     _friendlyExceptionNotification(e);
   }
 
-  $scope.templates = []
+  $scope.templates = [];
   try {
     $http
-      .get(ENV.api['root'] + 'msp-templates/dump')
+      .get(ENV.api["root"] + "msp-templates/dump")
       .then(function(result) {
         $scope.templates = result.data.response.templates;
       })
@@ -525,6 +529,6 @@ TableDeliveryServiceServersController.$inject = [
   "messageModel",
   "stringUtils",
   "$http",
-  "ENV"
+  "ENV",
 ];
 module.exports = TableDeliveryServiceServersController;
