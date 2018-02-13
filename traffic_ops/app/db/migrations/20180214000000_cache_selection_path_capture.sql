@@ -19,11 +19,10 @@
 ALTER TABLE deliveryservice
     ADD cache_selection_path_capture TEXT,
     ALTER COLUMN cache_selection_path_capture SET DEFAULT NULL;
-CREATE INDEX idx_k_deliveryservice_tenant_idx ON deliveryservice USING btree (tenant_id);
 
 -- +goose Down
 -- SQL section 'Down' is executed when this migration is rolled back
 
 ALTER TABLE deliveryservice
-DROP COLUMN tenant_id;
+DROP COLUMN cache_selection_path_capture;
 
