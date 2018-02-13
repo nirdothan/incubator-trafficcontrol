@@ -128,6 +128,7 @@
             $('#mid_header_rewrite_row').show(speed);
             $('#regex_remap_row').show(speed);
             $('#cacheurl_row').show(speed);
+            $('#cache_selection_path_capture_row').show(speed);
             $('#origin_shield_row').show(speed);
             $('#active_row').show(speed);
             $('#ds_regexp_table').show(speed);
@@ -170,6 +171,7 @@
             $('#mid_header_rewrite_row').show(speed);
             $('#regex_remap_row').show(speed);
             $('#cacheurl_row').show(speed);
+            $('#cache_selection_path_capture_row').hide(speed);
             $('#origin_shield_row').show(speed);
             $('#active_row').show(speed);
             $('#ds_regexp_table').show(speed);
@@ -208,6 +210,7 @@
             $('#mid_header_rewrite_row').hide(speed);
             $('#regex_remap_row').hide(speed);
             $('#cacheurl_row').hide(speed);
+            $('#cache_selection_path_capture_row').hide(speed);
             $('#origin_shield_row').hide(speed);
             $('#active_row').show(speed);
             $('#ds_regexp_table').show(speed);
@@ -246,6 +249,7 @@
             $('#mid_header_rewrite_row').hide(speed);
             $('#regex_remap_row').hide(speed);
             $('#cacheurl_row').hide(speed);
+            $('#cache_selection_path_capture_row').hide(speed);
             $('#origin_shield_row').hide(speed);
             $('#active_row').show(speed);
             $('#ds_regexp_table').show(speed);
