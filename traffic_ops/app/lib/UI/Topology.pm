@@ -574,6 +574,13 @@ sub gen_crconfig_json {
                 $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'geoLimitRedirectURL'} =
                     defined($row->geolimit_redirect_url) ? $row->geolimit_redirect_url : "";
             }
+
+            if ( defined( $row->cache_selection_path_capture )
+                && $row->cache_selection_path_capture ne "" )
+            {
+                $data_obj->{'deliveryServices'}->{ $row->xml_id }->{'cacheSelectionPathCapture'} =
+                        defined($row->cache_selection_path_capture) ? $row->cache_selection_path_capture : "";
+            }
         }
 
         if ( defined( $row->tr_response_headers )

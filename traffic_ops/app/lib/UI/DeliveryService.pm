@@ -253,6 +253,7 @@ sub read {
 				"ipv6_routing_enabled"        => \$row->ipv6_routing_enabled,
 				"range_request_handling"      => $row->range_request_handling,
 				"cacheurl"                    => $row->cacheurl,
+                "cache_selection_path_capture"  => $row->cache_selection_path_capture,
 				"remap_text"                  => $row->remap_text,
 				"initial_dispersion"          => $row->initial_dispersion,
 				"regional_geo_blocking"       => $row->regional_geo_blocking,
@@ -856,7 +857,8 @@ sub update {
 			regex_remap        => $self->paramAsScalar( 'ds.regex_remap',        undef ),
 			origin_shield      => $self->paramAsScalar( 'ds.origin_shield',      undef ),
 			cacheurl           => $self->paramAsScalar( 'ds.cacheurl',           undef ),
-			remap_text         => $self->paramAsScalar( 'ds.remap_text',         undef ),
+            cache_selection_path_capture => $self->paramAsScalar( 'ds.cache_selection_path_capture',           undef ),
+            remap_text         => $self->paramAsScalar( 'ds.remap_text',         undef ),
 			initial_dispersion => $self->paramAsScalar( 'ds.initial_dispersion', 1 ),
 			logs_enabled       => $self->paramAsScalar('ds.logs_enabled'),
 		);
@@ -1084,8 +1086,8 @@ sub create {
 				regex_remap        => $self->paramAsScalar( 'ds.regex_remap',        undef ),
 				origin_shield      => $self->paramAsScalar( 'ds.origin_shield',      undef ),
 				cacheurl           => $self->paramAsScalar( 'ds.cacheurl',           undef ),
-				remap_text         => $self->paramAsScalar( 'ds.remap_text',         undef ),
-				initial_dispersion => $self->paramAsScalar( 'ds.initial_dispersion', 1 ),
+                cache_selection_path_capture => $self->paramAsScalar( 'ds.cache_selection_path_capture',           undef ),
+            	initial_dispersion => $self->paramAsScalar( 'ds.initial_dispersion', 1 ),
 				logs_enabled       => $self->paramAsScalar('ds.logs_enabled'),
 				tenant_id => $tenant_id,
 			}
